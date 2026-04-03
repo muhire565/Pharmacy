@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Core palette (RGB triplets) */
+    --bg: 247 249 251; /* muted */
+    --surface: 255 255 255;
+    --muted: 247 249 251;
+    --ink: 31 41 55;
+    --ink-muted: 107 114 128;
+    --border: 31 41 55;
+
+    --primary: 30 58 95;
+    --primary-foreground: 247 249 251;
+    --accent: 42 157 143;
+    --accent-foreground: 255 255 255;
+
+    --danger: 214 69 69;
+    --warning: 233 162 59;
+    --success: 47 158 68;
+  }
+
+  .dark {
+    --bg: 11 18 32;
+    --surface: 15 23 42;
+    --muted: 11 18 32;
+    --ink: 229 231 235;
+    --ink-muted: 148 163 184;
+    --border: 255 255 255;
+
+    --primary: 96 165 250; /* brighter in dark */
+    --primary-foreground: 11 18 32;
+    --accent: 34 211 238;
+    --accent-foreground: 11 18 32;
+  }
+
+  html {
+    @apply antialiased text-ink;
+  }
+  body {
+    @apply min-h-screen bg-muted font-sans;
+  }
+  kbd {
+    @apply border border-ink/15 bg-surface px-1 py-0.5 font-mono text-xs shadow-sm;
+  }
+}
