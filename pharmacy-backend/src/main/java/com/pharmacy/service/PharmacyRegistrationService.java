@@ -9,12 +9,14 @@ import com.pharmacy.exception.BusinessRuleException;
 import com.pharmacy.repository.PharmacyRepository;
 import com.pharmacy.repository.UserRepository;
 import com.pharmacy.util.PharmacyCurrency;
+import com.pharmacy.util.SecureTokens;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.OffsetDateTime;
 import java.util.regex.Pattern;
 
 @Service
@@ -30,6 +32,7 @@ public class PharmacyRegistrationService {
     private final PhoneValidationService phoneValidationService;
     private final FileStorageService fileStorageService;
     private final ApiProperties apiProperties;
+    private final EmailDispatchService emailDispatchService;
 
     @Transactional
     public PharmacyResponse register(
@@ -83,32 +86,26 @@ public class PharmacyRegistrationService {
         pharmacy.setLogoPath(logoRel);
         pharmacy = pharmacyRepository.save(pharmacy);
 
+        String verifyRaw = SecureTokens.randomUrlToken();
         User admin = User.builder()
                 .pharmacy(pharmacy)
                 .email(em)
                 .username(em)
                 .password(passwordEncoder.encode(adminPassword))
                 .role(Role.PHARMACY_ADMIN)
+                .emailVerified(false)
+                .emailVerificationTokenHash(SecureTokens.sha256Hex(verifyRaw))
+                .emailVerificationExpiresAt(OffsetDateTime.now().plusHours(48))
+                .mfaEnabled(false)
                 .build();
         userRepository.save(admin);
 
-        String defaultCashierEmail = "cashier+" + pharmacy.getId() + "@nexpharm.local";
-        String defaultCashierPassword = "cashier123";
-        if (!userRepository.existsByEmailIgnoreCase(defaultCashierEmail)) {
-            User cashier = User.builder()
-                    .pharmacy(pharmacy)
-                    .email(defaultCashierEmail)
-                    .username("cashier")
-                    .password(passwordEncoder.encode(defaultCashierPassword))
-                    .role(Role.CASHIER)
-                    .build();
-            userRepository.save(cashier);
-        }
+        emailDispatchService.sendEmailVerification(em, verifyRaw);
 
-        return toRegistrationResponse(pharmacy, defaultCashierEmail, defaultCashierPassword);
+        return toRegistrationResponse(pharmacy);
     }
 
-    private PharmacyResponse toRegistrationResponse(Pharmacy p, String cashierEmail, String cashierPassword) {
+    private PharmacyResponse toRegistrationResponse(Pharmacy p) {
         return PharmacyResponse.builder()
                 .id(p.getId())
                 .name(p.getName())
@@ -120,8 +117,7 @@ public class PharmacyRegistrationService {
                 .logoUrl(p.getLogoPath() != null
                         ? apiProperties.getPrefix() + "/public/pharmacies/" + p.getId() + "/logo"
                         : null)
-                .defaultCashierEmail(cashierEmail)
-                .defaultCashierPassword(cashierPassword)
+                .emailVerificationPending(true)
                 .build();
     }
 }

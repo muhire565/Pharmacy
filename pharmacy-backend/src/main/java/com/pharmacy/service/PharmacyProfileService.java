@@ -137,6 +137,10 @@ public class PharmacyProfileService {
     }
 
     public PharmacyResponse toMeResponse(Pharmacy p) {
+        boolean verificationPending = userRepository
+                .findById(SecurityUtils.currentUserId())
+                .map(u -> !u.isEmailVerified() && u.getRole() != Role.SYSTEM_OWNER)
+                .orElse(false);
         return PharmacyResponse.builder()
                 .id(p.getId())
                 .name(p.getName())
@@ -146,8 +150,7 @@ public class PharmacyProfileService {
                 .address(p.getAddress())
                 .currencyCode(p.getCurrencyCode())
                 .logoUrl(p.getLogoPath() != null ? apiProperties.getPrefix() + "/pharmacies/me/logo" : null)
-                .defaultCashierEmail(null)
-                .defaultCashierPassword(null)
+                .emailVerificationPending(verificationPending)
                 .build();
     }
 }

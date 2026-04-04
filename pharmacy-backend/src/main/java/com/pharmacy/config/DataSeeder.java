@@ -41,6 +41,8 @@ public class DataSeeder implements CommandLineRunner {
                     .username("owner")
                     .password(passwordEncoder.encode("owner123"))
                     .role(Role.SYSTEM_OWNER)
+                    .emailVerified(true)
+                    .mfaEnabled(false)
                     .build());
             log.info("Seeded system owner: {} / owner123", ownerEmail);
         }
@@ -61,6 +63,8 @@ public class DataSeeder implements CommandLineRunner {
                     .username("admin")
                     .password(passwordEncoder.encode("admin123"))
                     .role(Role.PHARMACY_ADMIN)
+                    .emailVerified(true)
+                    .mfaEnabled(false)
                     .build());
 
             userRepository.save(User.builder()
@@ -69,6 +73,8 @@ public class DataSeeder implements CommandLineRunner {
                     .username("cashier")
                     .password(passwordEncoder.encode("cashier123"))
                     .role(Role.CASHIER)
+                    .emailVerified(true)
+                    .mfaEnabled(false)
                     .build());
 
             log.info("Seeded demo pharmacy and users: admin@demo.pharmacy.local / admin123, cashier@demo.pharmacy.local / cashier123");

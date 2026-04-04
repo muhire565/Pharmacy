@@ -31,8 +31,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (StringUtils.hasText(header) && header.startsWith(BEARER)) {
             String token = header.substring(BEARER.length()).trim();
             if (jwtTokenProvider.validate(token)) {
-                var auth = jwtTokenProvider.toAuthentication(token);
-                SecurityContextHolder.getContext().setAuthentication(auth);
+                try {
+                    var auth = jwtTokenProvider.toAuthentication(token);
+                    SecurityContextHolder.getContext().setAuthentication(auth);
+                } catch (RuntimeException ignored) {
+                    // malformed or wrong token type
+                }
             }
         }
         filterChain.doFilter(request, response);

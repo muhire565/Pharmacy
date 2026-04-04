@@ -6,16 +6,25 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
-  token: string;
+  token: string | null;
   tokenType: string;
   expiresInMs: number;
-  email: string;
-  role: Role;
+  email: string | null;
+  role: Role | null;
   pharmacyId: number | null;
   pharmacyName: string | null;
   logoUrl?: string | null;
   /** RWF | UGX | USD when user belongs to a pharmacy */
   currencyCode?: string | null;
+  mfaRequired?: boolean;
+  mfaChallengeToken?: string | null;
+}
+
+export interface MfaSetupResponse {
+  secretBase32: string;
+  otpAuthUri: string;
+  issuer: string;
+  accountEmail: string;
 }
 
 export interface OwnerPharmacy {
@@ -59,8 +68,7 @@ export interface PharmacyResponse {
   address: string;
   currencyCode: string;
   logoUrl?: string | null;
-  defaultCashierEmail?: string | null;
-  defaultCashierPassword?: string | null;
+  emailVerificationPending?: boolean;
 }
 
 export interface ApiErrorBody {

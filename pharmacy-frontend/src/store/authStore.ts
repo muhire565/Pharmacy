@@ -37,7 +37,8 @@ export const useAuthStore = create<AuthState>()(
       logoUrl: null,
       currencyCode: "RWF",
       brandingVersion: 0,
-      setAuth: (data) =>
+      setAuth: (data) => {
+        if (!data.token) return;
         set({
           token: data.token,
           email: data.email,
@@ -47,7 +48,8 @@ export const useAuthStore = create<AuthState>()(
           logoUrl: data.logoUrl ?? null,
           currencyCode: parsePharmacyCurrency(data.currencyCode),
           brandingVersion: 0,
-        }),
+        });
+      },
       setBranding: (p) =>
         set((s) => {
           const nextName = p.pharmacyName ?? s.pharmacyName;

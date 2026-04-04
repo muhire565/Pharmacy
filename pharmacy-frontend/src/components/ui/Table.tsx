@@ -6,10 +6,17 @@ export function Table(props: {
   className?: string;
   /** Min width of inner table; lower = less horizontal scroll on small phones */
   minTableWidth?: string;
+  /** Outer scroll wrapper (e.g. `border-0` when nested inside a card) */
+  wrapClassName?: string;
 }) {
   const minW = props.minTableWidth ?? "min-w-[640px]";
   return (
-    <div className="overflow-x-auto rounded-lg border border-ink/10 [-webkit-overflow-scrolling:touch]">
+    <div
+      className={cn(
+        "overflow-x-auto rounded-lg border border-ink/10 [-webkit-overflow-scrolling:touch]",
+        props.wrapClassName
+      )}
+    >
       <table className={cn("w-full text-left text-sm", minW, props.className)}>
         {props.children}
       </table>

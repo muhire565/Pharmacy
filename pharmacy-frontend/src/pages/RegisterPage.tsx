@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -22,6 +23,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { LogoUploadModal } from "@/components/register/LogoUploadModal";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import {
   PHARMACY_CURRENCIES,
   PHARMACY_CURRENCY_LABELS,
@@ -60,6 +62,7 @@ const schema = z.object({
 type Form = z.infer<typeof schema>;
 
 export function RegisterPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [countryOpen, setCountryOpen] = useState(false);
   const [countrySearch, setCountrySearch] = useState("");
@@ -117,7 +120,7 @@ export function RegisterPage() {
   const reg = useMutation({
     mutationFn: async (v: Form) => {
       if (!logoFile) {
-        throw new Error("Logo is required");
+        throw new Error(t("register.logoRequired"));
       }
       const fd = new FormData();
       fd.append("pharmacyName", v.pharmacyName.trim());
@@ -130,46 +133,45 @@ export function RegisterPage() {
       fd.append("logo", logoFile);
       return publicApi.registerPharmacy(fd);
     },
-    onSuccess: (data) => {
-      toast.success("Pharmacy registered — sign in with your email");
-      if (data.defaultCashierEmail && data.defaultCashierPassword) {
-        toast.info(
-          `Default cashier: ${data.defaultCashierEmail} / ${data.defaultCashierPassword}`
-        );
-      }
+    onSuccess: () => {
+      toast.success(t("register.success"));
+      toast.info(t("register.verifyPrompt"));
       navigate("/login", { replace: true });
     },
-    onError: (e) => toast.error(getApiErrorMessage(e, "Registration failed")),
+    onError: (e) => toast.error(getApiErrorMessage(e, t("register.failed"))),
   });
 
-  const steps = [
-    {
-      title: "Pharmacy details",
-      icon: Building2,
-      fields: ["pharmacyName", "countryCode", "phone", "currencyCode"] as const,
-    },
-    {
-      title: "Contact & branding",
-      icon: Phone,
-      fields: ["email", "address"] as const,
-    },
-    {
-      title: "Security",
-      icon: ShieldCheck,
-      fields: ["adminPassword", "confirmPassword"] as const,
-    },
-  ];
+  const steps = useMemo(
+    () => [
+      {
+        title: t("register.stepPharmacy"),
+        icon: Building2,
+        fields: ["pharmacyName", "countryCode", "phone", "currencyCode"] as const,
+      },
+      {
+        title: t("register.stepContact"),
+        icon: Phone,
+        fields: ["email", "address"] as const,
+      },
+      {
+        title: t("register.stepSecurity"),
+        icon: ShieldCheck,
+        fields: ["adminPassword", "confirmPassword"] as const,
+      },
+    ],
+    [t]
+  );
 
   async function goNextStep() {
     const current = steps[step];
     const ok = await form.trigger(current.fields);
     if (!ok) {
-      toast.error("Please fix validation errors before continuing");
+      toast.error(t("register.fixErrors"));
       return;
     }
     if (step === 1 && !logoFile) {
-      setLogoErr("Logo is required");
-      toast.error("Please upload your pharmacy logo");
+      setLogoErr(t("register.logoRequired"));
+      toast.error(t("register.uploadLogo"));
       return;
     }
     setStep((s) => Math.min(steps.length - 1, s + 1));
@@ -211,7 +213,10 @@ export function RegisterPage() {
   }, [logoPreview]);
 
   return (
-    <div className="min-h-screen bg-muted px-4 py-10">
+    <div className="relative min-h-screen bg-muted px-4 py-10">
+      <div className="absolute right-4 top-4 w-40">
+        <LanguageSwitcher />
+      </div>
       <Card className="mx-auto w-full max-w-lg border-ink/10 p-6 shadow-card sm:p-8">
         <div className="mb-5">
           <Link
@@ -219,17 +224,15 @@ export function RegisterPage() {
             className="inline-flex items-center gap-2 text-sm font-medium text-ink-muted hover:text-ink"
           >
             <ArrowLeft className="size-4" />
-            Back home
+            {t("landing.backHome")}
           </Link>
         </div>
         <div className="mb-6 text-center">
           <div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-xl bg-primary text-lg font-bold text-primary-foreground">
             Rx
           </div>
-          <h1 className="text-xl font-semibold text-ink">Register your pharmacy</h1>
-          <p className="mt-1 text-sm text-ink-muted">
-            One account per pharmacy — data stays isolated
-          </p>
+          <h1 className="text-xl font-semibold text-ink">{t("register.title")}</h1>
+          <p className="mt-1 text-sm text-ink-muted">{t("register.subtitle")}</p>
         </div>
 
         <div className="mb-6">
@@ -261,7 +264,7 @@ export function RegisterPage() {
                       <Icon className={cn("size-4", active ? "text-primary" : "text-ink-muted")} />
                     )}
                     <span className="text-xs font-semibold uppercase tracking-wide text-ink-muted">
-                      Step {idx + 1}
+                      {t("register.stepLabel", { n: idx + 1 })}
                     </span>
                   </div>
                   <p className={cn("text-sm font-medium", active ? "text-ink" : "text-ink-muted")}>
@@ -278,12 +281,12 @@ export function RegisterPage() {
           onSubmit={form.handleSubmit(async (v) => {
             const valid = await form.trigger();
             if (!valid) {
-              toast.error("Please complete all required fields");
+              toast.error(t("register.completeFields"));
               return;
             }
             if (!logoFile) {
-              setLogoErr("Logo is required");
-              toast.error("Logo is required");
+              setLogoErr(t("register.logoRequired"));
+              toast.error(t("register.logoRequired"));
               return;
             }
             reg.mutate(v);
@@ -539,12 +542,12 @@ export function RegisterPage() {
           <div className="flex items-center gap-2 pt-2">
             {step > 0 ? (
               <Button type="button" variant="secondary" onClick={goPrevStep}>
-                Back
+                {t("register.back")}
               </Button>
             ) : null}
             {step < steps.length - 1 ? (
               <Button type="button" className="ml-auto" onClick={() => void goNextStep()}>
-                Continue
+                {t("auth.continue")}
               </Button>
             ) : (
               <Button
@@ -553,16 +556,16 @@ export function RegisterPage() {
                 loading={reg.isPending}
                 disabled={reg.isPending}
               >
-                Create pharmacy
+                {t("register.submit")}
               </Button>
             )}
           </div>
         </form>
 
         <p className="mt-6 text-center text-sm text-ink-muted">
-          Already have an account?{" "}
+          {t("register.alreadyAccount")}{" "}
           <Link to="/login" className="font-medium text-primary hover:underline">
-            Sign in
+            {t("register.signInLink")}
           </Link>
         </p>
       </Card>

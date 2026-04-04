@@ -4,10 +4,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { pharmacyApi } from "@/api/queries";
+import { pharmacyApi, authApi } from "@/api/queries";
 import { getApiErrorMessage } from "@/api/client";
 import { useAuthStore } from "@/store/authStore";
 import { tenantKey } from "@/utils/tenantQuery";
+import { useTranslation } from "react-i18next";
 import { Card, CardHeader } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -35,8 +36,10 @@ const schema = z.object({
 type Form = z.infer<typeof schema>;
 
 export function PharmacyProfileSettings() {
+  const { t } = useTranslation();
   const qc = useQueryClient();
   const pharmacyId = useAuthStore((s) => s.pharmacyId);
+  const authEmail = useAuthStore((s) => s.email);
   const setBranding = useAuthStore((s) => s.setBranding);
   const bumpLogo = useAuthStore((s) => s.bumpLogo);
   const [logoFile, setLogoFile] = useState<File | null>(null);
@@ -108,6 +111,12 @@ export function PharmacyProfileSettings() {
     onError: (e) => toast.error(getApiErrorMessage(e)),
   });
 
+  const resendMut = useMutation({
+    mutationFn: (email: string) => authApi.resendVerification(email),
+    onSuccess: () => toast.success(t("settings.resendVerificationToast")),
+    onError: (e) => toast.error(getApiErrorMessage(e)),
+  });
+
   function onPickLogo(f: File | null) {
     setLogoErr(null);
     if (!f) {
@@ -132,6 +141,23 @@ export function PharmacyProfileSettings() {
   return (
     <Card className="mb-6">
       <CardHeader title="Pharmacy profile" />
+      {pharmacy.emailVerificationPending ? (
+        <div className="space-y-2 border-b border-warning/25 bg-warning/10 px-4 py-3">
+          <p className="text-sm font-semibold text-ink">{t("settings.emailPendingTitle")}</p>
+          <p className="text-xs leading-relaxed text-ink-muted">{t("settings.emailPendingBody")}</p>
+          {authEmail ? (
+            <Button
+              type="button"
+              variant="secondary"
+              className="text-xs"
+              loading={resendMut.isPending}
+              onClick={() => resendMut.mutate(authEmail)}
+            >
+              {t("auth.resendVerification")}
+            </Button>
+          ) : null}
+        </div>
+      ) : null}
       <form
         className="space-y-4 border-t border-ink/10 p-4"
         onSubmit={form.handleSubmit(() => mut.mutate(logoFile))}

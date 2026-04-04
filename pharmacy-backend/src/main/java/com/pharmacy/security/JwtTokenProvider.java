@@ -18,6 +18,9 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class JwtTokenProvider {
 
+    public static final String CLAIM_TYP = "typ";
+    public static final String TYP_MFA_CHALLENGE = "mfa_challenge";
+
     private final JwtProperties jwtProperties;
 
     public String createToken(Long userId, String email, Long pharmacyId, Role role) {
@@ -28,10 +31,37 @@ public class JwtTokenProvider {
                 .claim("uid", userId)
                 .claim("pharmacyId", pharmacyId)
                 .claim("role", role.name())
+                .claim(CLAIM_TYP, "access")
                 .issuedAt(now)
                 .expiration(exp)
                 .signWith(signingKey())
                 .compact();
+    }
+
+    /** Short-lived token after password auth; POST /auth/mfa/verify exchanges it for an access token */
+    public String createMfaChallengeToken(Long userId, String email) {
+        Date now = new Date();
+        Date exp = new Date(now.getTime() + jwtProperties.getMfaChallengeExpirationMs());
+        return Jwts.builder()
+                .subject(email)
+                .claim("uid", userId)
+                .claim(CLAIM_TYP, TYP_MFA_CHALLENGE)
+                .issuedAt(now)
+                .expiration(exp)
+                .signWith(signingKey())
+                .compact();
+    }
+
+    public MfaChallenge parseMfaChallenge(String token) {
+        Claims claims = Jwts.parser()
+                .verifyWith(signingKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+        if (!TYP_MFA_CHALLENGE.equals(claims.get(CLAIM_TYP))) {
+            throw new IllegalArgumentException("Invalid MFA challenge token");
+        }
+        return new MfaChallenge(claims.get("uid", Long.class), claims.getSubject());
     }
 
     public Authentication toAuthentication(String token) {
@@ -40,19 +70,34 @@ public class JwtTokenProvider {
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
+        if (TYP_MFA_CHALLENGE.equals(claims.get(CLAIM_TYP))) {
+            throw new IllegalStateException("MFA challenge token cannot be used as API access");
+        }
         String email = claims.getSubject();
         Long userId = claims.get("uid", Long.class);
         Long pharmacyId = claims.get("pharmacyId", Long.class);
         String roleName = claims.get("role", String.class);
         Role role = Role.valueOf(roleName);
-        PharmacyUserDetails principal = new PharmacyUserDetails(userId, pharmacyId, email, "", role);
+        PharmacyUserDetails principal = new PharmacyUserDetails(userId, pharmacyId, email, "", role, true);
         return new UsernamePasswordAuthenticationToken(principal, token, principal.getAuthorities());
     }
 
     public boolean validate(String token) {
         try {
-            Jwts.parser().verifyWith(signingKey()).build().parseSignedClaims(token);
+            Claims claims = Jwts.parser().verifyWith(signingKey()).build().parseSignedClaims(token).getPayload();
+            if (TYP_MFA_CHALLENGE.equals(claims.get(CLAIM_TYP))) {
+                return false;
+            }
             return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean validateMfaChallengeToken(String token) {
+        try {
+            Claims claims = Jwts.parser().verifyWith(signingKey()).build().parseSignedClaims(token).getPayload();
+            return TYP_MFA_CHALLENGE.equals(claims.get(CLAIM_TYP));
         } catch (Exception e) {
             return false;
         }

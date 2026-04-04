@@ -21,6 +21,8 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { AccordionItem } from "@/components/ui/Accordion";
+import { useTranslation } from "react-i18next";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
 function useScrolledShadow() {
   const [scrolled, setScrolled] = useState(false);
@@ -101,6 +103,7 @@ function PricingCard({
 }
 
 export function LandingPage() {
+  const { t } = useTranslation();
   const scrolled = useScrolledShadow();
   const [billing, setBilling] = useState<"monthly" | "yearly">("monthly");
   const price = useMemo(() => {
@@ -205,14 +208,17 @@ export function LandingPage() {
           </nav>
 
           <div className="ml-auto flex items-center gap-2 md:ml-4">
+            <div className="hidden w-36 sm:block">
+              <LanguageSwitcher />
+            </div>
             <ThemeToggle className="hidden sm:inline-flex" />
             <Link to="/login">
               <Button variant="secondary" className="border-ink/15 bg-surface">
-                Login
+                {t("landing.loginCta")}
               </Button>
             </Link>
             <Link to="/register">
-              <Button className="shadow-sm">Get Started</Button>
+              <Button className="shadow-sm">{t("landing.getStartedCta")}</Button>
             </Link>
           </div>
         </div>
@@ -228,14 +234,13 @@ export function LandingPage() {
         <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-10 px-4 py-16 sm:px-6 md:grid-cols-2 md:py-20">
           <div>
             <Badge tone="accent" className="px-3 py-1">
-              Secure multi-tenant SaaS
+              {t("landing.heroBadge")}
             </Badge>
             <h1 className="mt-4 text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
-              Modern Pharmacy Management, Simplified.
+              {t("landing.heroTitleMain")}
             </h1>
             <p className="mt-4 max-w-xl text-base leading-relaxed text-ink-muted">
-              Run and scale your pharmacy with a secure, multi-tenant platform
-              built for efficiency, compliance-ready workflows, and growth.
+              {t("landing.heroLead")}
             </p>
 
             <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   LogOut,
   ShieldCheck,
@@ -26,8 +27,11 @@ import { useAuthStore } from "@/store/authStore";
 import { getLiveSocketUrl } from "@/utils/liveSocket";
 import { formatLongDateTime, getGreetingForTime } from "@/utils/greeting";
 import { useNow } from "@/hooks/useNow";
+import { MfaSettingsCard } from "@/features/settings/MfaSettingsCard";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
 export function OwnerDashboardPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const logout = useAuthStore((s) => s.logout);
   const token = useAuthStore((s) => s.token);
@@ -158,30 +162,35 @@ export function OwnerDashboardPage() {
               {greeting}
             </p>
             <h1 className="mt-1 text-2xl font-semibold leading-tight text-ink sm:text-3xl">
-              System Owner
+              {t("owner.headline")}
             </h1>
             <p className="mt-1 text-sm text-ink-muted">{dayTime}</p>
           </div>
         </div>
-        <Button
-          variant="secondary"
-          className="w-full shrink-0 gap-2 sm:w-auto"
-          onClick={() => {
-            qc.clear();
-            logout();
-            navigate("/login", { replace: true });
-          }}
-        >
-          <LogOut className="size-4" />
-          Logout
-        </Button>
+        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
+          <LanguageSwitcher selectClassName="min-w-[10rem]" />
+          <Button
+            variant="secondary"
+            className="w-full shrink-0 gap-2 sm:w-auto"
+            onClick={() => {
+              qc.clear();
+              logout();
+              navigate("/login", { replace: true });
+            }}
+          >
+            <LogOut className="size-4" />
+            {t("owner.logout")}
+          </Button>
+        </div>
       </div>
+
+      <MfaSettingsCard />
 
       <div className="grid gap-3 sm:grid-cols-3">
         <Card className="p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs uppercase tracking-wide text-ink-muted">Total pharmacies</p>
+              <p className="text-xs uppercase tracking-wide text-ink-muted">{t("owner.totalPharmacies")}</p>
               <p className="mt-1 text-2xl font-semibold text-ink">{summary.total}</p>
             </div>
             <Building2 className="size-6 text-primary/70" />
@@ -190,7 +199,7 @@ export function OwnerDashboardPage() {
         <Card className="p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs uppercase tracking-wide text-ink-muted">Active on page</p>
+              <p className="text-xs uppercase tracking-wide text-ink-muted">{t("owner.activeOnPage")}</p>
               <p className="mt-1 text-2xl font-semibold text-success">{summary.active}</p>
             </div>
             <ShieldCheck className="size-6 text-success" />
@@ -199,7 +208,7 @@ export function OwnerDashboardPage() {
         <Card className="p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs uppercase tracking-wide text-ink-muted">Locked on page</p>
+              <p className="text-xs uppercase tracking-wide text-ink-muted">{t("owner.lockedOnPage")}</p>
               <p className="mt-1 text-2xl font-semibold text-danger">{summary.locked}</p>
             </div>
             <ShieldX className="size-6 text-danger" />
@@ -209,11 +218,11 @@ export function OwnerDashboardPage() {
 
       <Card>
         <CardHeader
-          title="Pharmacies"
+          title={t("owner.pharmacies")}
           action={
             <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
               <Input
-                placeholder="Search name / email / phone…"
+                placeholder={t("owner.searchPlaceholder")}
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
                 className="min-w-0 w-full sm:w-72"

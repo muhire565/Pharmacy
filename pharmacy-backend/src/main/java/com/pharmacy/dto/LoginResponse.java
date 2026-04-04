@@ -3,18 +3,41 @@ package com.pharmacy.dto;
 import com.pharmacy.entity.Role;
 import lombok.Builder;
 import lombok.Value;
+import org.springframework.lang.Nullable;
 
 @Value
 @Builder
 public class LoginResponse {
+    @Nullable
     String token;
-    String tokenType;
+
+    @Builder.Default
+    String tokenType = "Bearer";
+
     long expiresInMs;
+
+    @Nullable
     String email;
+
+    @Nullable
     Role role;
+
+    @Nullable
     Long pharmacyId;
+
+    @Nullable
     String pharmacyName;
+
+    @Nullable
     String logoUrl;
-    /** ISO 4217 when user belongs to a pharmacy; null for system owner */
+
+    @Nullable
     String currencyCode;
+
+    /** When true, use mfaChallengeToken with POST /auth/mfa/verify */
+    @Builder.Default
+    boolean mfaRequired = false;
+
+    @Nullable
+    String mfaChallengeToken;
 }

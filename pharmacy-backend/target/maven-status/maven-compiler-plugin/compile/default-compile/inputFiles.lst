@@ -5,6 +5,7 @@ C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\controller\AuditController.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\dto\PharmacyResponse.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\mapper\BatchMapper.java
+C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\dto\ForgotPasswordRequest.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\entity\Batch.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\entity\Sale.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\config\DataSeeder.java
@@ -15,6 +16,7 @@ C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\dto\BatchRequest.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\entity\PosDraftCart.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\entity\Supplier.java
+C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\util\SecureTokens.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\dto\OwnerPharmacyUpdateRequest.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\controller\OwnerController.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\dto\SalesSummaryResponse.java
@@ -30,7 +32,9 @@ C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\controller\PharmacyRegistrationController.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\dto\SupplierResponse.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\service\AuditQueryService.java
+C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\service\MfaService.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\exception\ResourceNotFoundException.java
+C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\dto\MfaDisableRequest.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\repository\AuditLogRepository.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\dto\ExpiringBatchResponse.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\service\BatchService.java
@@ -38,6 +42,7 @@ C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\repository\UserRepository.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\config\ApiProperties.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\service\InventoryService.java
+C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\config\AppMailProperties.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\controller\ReportController.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\dto\SaleLineRequest.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\dto\CountryOptionDto.java
@@ -45,6 +50,7 @@ C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\service\SupplierService.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\entity\StockReference.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\config\RenderDataSourceEnvironmentPostProcessor.java
+C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\dto\MfaEnableRequest.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\security\JwtAuthenticationFilter.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\dto\AuditLogResponse.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\config\SecurityConfig.java
@@ -60,8 +66,10 @@ C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\controller\AuthController.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\service\PharmacyProfileService.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\config\FileStorageProperties.java
+C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\service\AccountSecurityService.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\dto\ProductRequest.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\repository\ProductRepository.java
+C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\service\EmailDispatchService.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\config\JwtProperties.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\security\PharmacyUserDetails.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\repository\SupplierRepository.java
@@ -69,10 +77,12 @@ C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\PharmacyApplication.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\config\InventoryProperties.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\service\OwnerPharmacyService.java
+C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\dto\MfaSetupResponse.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\security\JwtTokenProvider.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\repository\BatchRepository.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\security\JwtAccessDeniedHandler.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\dto\OwnerPharmacyResponse.java
+C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\dto\ResendVerificationRequest.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\entity\Pharmacy.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\service\PosDraftService.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\dto\SaleItemResponse.java
@@ -83,6 +93,8 @@ C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\service\ProductService.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\security\JwtAuthenticationEntryPoint.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\mapper\SupplierMapper.java
+C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\security\MfaChallenge.java
+C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\service\TotpService.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\dto\PosDraftSyncRequest.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\entity\StockMovement.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\service\CurrentUserService.java
@@ -95,13 +107,16 @@ C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\mapper\ProductMapper.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\security\SecurityUtils.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\dto\LoginResponse.java
+C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\dto\ResetPasswordRequest.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\entity\AuditLog.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\entity\SaleItem.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\dto\SaleRequest.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\dto\OwnerLockRequest.java
+C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\dto\MfaVerifyRequest.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\util\BarcodeImageUtil.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\service\FileStorageService.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\service\CountriesService.java
+C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\dto\VerifyEmailRequest.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\config\WebSocketConfig.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\dto\SupplierRequest.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\service\AuthService.java

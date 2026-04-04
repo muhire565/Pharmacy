@@ -17,14 +17,17 @@ public class PharmacyUserDetails implements UserDetails {
     private final String email;
     private final String password;
     private final Role role;
+    private final boolean accountEnabled;
     private final Collection<? extends GrantedAuthority> authorities;
 
-    public PharmacyUserDetails(Long userId, Long pharmacyId, String email, String password, Role role) {
+    public PharmacyUserDetails(
+            Long userId, Long pharmacyId, String email, String password, Role role, boolean accountEnabled) {
         this.userId = userId;
         this.pharmacyId = pharmacyId;
         this.email = email;
         this.password = password;
         this.role = role;
+        this.accountEnabled = accountEnabled;
         this.authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
     }
 
@@ -60,6 +63,6 @@ public class PharmacyUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return accountEnabled;
     }
 }

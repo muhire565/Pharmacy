@@ -14,6 +14,6 @@ public class PharmacyResponse {
     String address;
     String currencyCode;
     String logoUrl;
-    String defaultCashierEmail;
-    String defaultCashierPassword;
+    /** True until the registering admin verifies email */
+    boolean emailVerificationPending;
 }

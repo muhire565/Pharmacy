@@ -1,5 +1,6 @@
 package com.pharmacy.security;
 
+import com.pharmacy.entity.Role;
 import com.pharmacy.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,12 +20,14 @@ public class DatabaseUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         var user = userRepository.findWithPharmacyByEmailIgnoreCase(email.trim())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        boolean enabled = user.getRole() == Role.SYSTEM_OWNER || user.isEmailVerified();
         return new PharmacyUserDetails(
                 user.getId(),
                 user.getPharmacy().getId(),
                 user.getEmail(),
                 user.getPassword(),
-                user.getRole()
+                user.getRole(),
+                enabled
         );
     }
 }

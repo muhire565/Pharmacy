@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
 import { Plus, Pencil, Trash2, Keyboard } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { suppliersApi } from "@/api/queries";
 import { getApiErrorMessage } from "@/api/client";
 import { useAuthStore } from "@/store/authStore";
@@ -15,6 +16,8 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Modal } from "@/components/ui/Modal";
 import { Table, Th, Td } from "@/components/ui/Table";
+import { MfaSettingsCard } from "@/features/settings/MfaSettingsCard";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
 const supSchema = z.object({
   name: z.string().min(1),
@@ -25,6 +28,7 @@ const supSchema = z.object({
 type SupForm = z.infer<typeof supSchema>;
 
 export function SettingsPage() {
+  const { t } = useTranslation();
   const isPharmacyAdmin = useAuthStore((s) => s.role === "PHARMACY_ADMIN");
   const pharmacyId = useAuthStore((s) => s.pharmacyId);
   const qc = useQueryClient();
@@ -74,16 +78,26 @@ export function SettingsPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold text-ink">Settings</h1>
-        <p className="text-sm text-ink-muted">Suppliers and workspace hints</p>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold text-ink">{t("settings.title")}</h1>
+          <p className="text-sm text-ink-muted">{t("settings.subtitle")}</p>
+        </div>
+        <div className="w-full max-w-[12rem]">
+          <LanguageSwitcher />
+        </div>
       </div>
 
-      {isPharmacyAdmin ? <PharmacyProfileSettings /> : null}
+      {isPharmacyAdmin ? (
+        <>
+          <MfaSettingsCard />
+          <PharmacyProfileSettings />
+        </>
+      ) : null}
 
       <Card>
         <CardHeader
-          title="Suppliers"
+          title={t("settings.suppliers")}
           action={
             <Button
               className="gap-2"
@@ -93,7 +107,7 @@ export function SettingsPage() {
                 setOpen(true);
               }}
             >
-              <Plus className="size-4" /> Add
+              <Plus className="size-4" /> {t("settings.add")}
             </Button>
           }
         />

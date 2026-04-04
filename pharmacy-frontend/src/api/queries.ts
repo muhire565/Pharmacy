@@ -7,6 +7,7 @@ import type {
   ExpiringBatchResponse,
   LoginRequest,
   LoginResponse,
+  MfaSetupResponse,
   LowStockProductResponse,
   OwnerLockRequest,
   OwnerPharmacy,
@@ -27,6 +28,21 @@ import type {
 export const authApi = {
   login: (body: LoginRequest) =>
     api.post<LoginResponse>("/auth/login", body).then((r) => r.data),
+  verifyMfa: (body: { mfaChallengeToken: string; code: string }) =>
+    api.post<LoginResponse>("/auth/mfa/verify", body).then((r) => r.data),
+  verifyEmail: (token: string) =>
+    api.post<{ verified: boolean }>("/auth/verify-email", { token }).then((r) => r.data),
+  resendVerification: (email: string) =>
+    api.post<{ ok: boolean }>("/auth/resend-verification", { email }).then((r) => r.data),
+  forgotPassword: (email: string) =>
+    api.post<{ ok: boolean }>("/auth/forgot-password", { email }).then((r) => r.data),
+  resetPassword: (token: string, newPassword: string) =>
+    api.post<{ ok: boolean }>("/auth/reset-password", { token, newPassword }).then((r) => r.data),
+  mfaSetup: () => api.get<MfaSetupResponse>("/auth/mfa/setup").then((r) => r.data),
+  mfaEnable: (code: string) =>
+    api.post<{ enabled: boolean }>("/auth/mfa/enable", { code }).then((r) => r.data),
+  mfaDisable: (password: string) =>
+    api.post<{ disabled: boolean }>("/auth/mfa/disable", { password }).then((r) => r.data),
 };
 
 export const publicApi = {
