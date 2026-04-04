@@ -1,0 +1,10 @@
+.git
+.github
+**/.idea
+**/*.iml
+**/target
+pharmacy-frontend/node_modules
+pharmacy-frontend/dist
+**/.env
+**/.env.*
+**/uploads
