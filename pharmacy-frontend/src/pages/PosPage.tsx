@@ -15,7 +15,6 @@ import type { ProductResponse } from "@/api/types";
 import { Card, CardHeader } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { Badge } from "@/components/ui/Badge";
 import { Table, Th, Td } from "@/components/ui/Table";
 import { cn } from "@/utils/cn";
 import { canUseBarcodeCamera } from "@/utils/camera";

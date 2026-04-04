@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -8,12 +8,19 @@ import { useAuthStore } from "@/store/authStore";
 import { pharmacyApi } from "@/api/queries";
 import { getLiveSocketUrl } from "@/utils/liveSocket";
 import { tenantKey } from "@/utils/tenantQuery";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 export function AppShell() {
   const token = useAuthStore((s) => s.token);
   const pharmacyId = useAuthStore((s) => s.pharmacyId);
   const setBranding = useAuthStore((s) => s.setBranding);
   const queryClient = useQueryClient();
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
+  const [mobileNavExpanded, setMobileNavExpanded] = useState(false);
+
+  useEffect(() => {
+    if (isDesktop) setMobileNavExpanded(false);
+  }, [isDesktop]);
 
   const { data: profile } = useQuery({
     queryKey: tenantKey(pharmacyId, "pharmacy", "me"),
@@ -87,10 +94,17 @@ export function AppShell() {
 
   return (
     <div className="flex min-h-screen bg-muted">
-      <Sidebar />
+      <Sidebar
+        mobileExpanded={mobileNavExpanded}
+        setMobileExpanded={setMobileNavExpanded}
+        isDesktop={isDesktop}
+      />
       <div className="flex min-w-0 flex-1 flex-col">
-        <Topbar />
-        <main className="flex-1 overflow-auto p-6">
+        <Topbar
+          isDesktop={isDesktop}
+          onMenuClick={() => setMobileNavExpanded((v) => !v)}
+        />
+        <main className="flex-1 overflow-auto p-4 sm:p-5 lg:p-6">
           <Outlet />
         </main>
       </div>

@@ -18,9 +18,9 @@ export function CardHeader(props: {
   action?: React.ReactNode;
 }) {
   return (
-    <div className="mb-4 flex items-start justify-between gap-3">
-      <h2 className="text-base font-semibold text-ink">{props.title}</h2>
-      {props.action}
+    <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+      <h2 className="shrink-0 text-base font-semibold text-ink">{props.title}</h2>
+      {props.action ? <div className="min-w-0 sm:shrink-0">{props.action}</div> : null}
     </div>
   );
 }

@@ -48,7 +48,6 @@ export function PharmacyProfileSettings() {
       pharmacyName: "",
       countryCode: "",
       phone: "",
-      email: "",
       address: "",
     },
   });
@@ -76,7 +75,7 @@ export function PharmacyProfileSettings() {
       fd.append("pharmacyName", v.pharmacyName.trim());
       fd.append("countryCode", v.countryCode.trim().toUpperCase());
       fd.append("phone", v.phone.trim());
-      fd.append("email", pharmacy.email);
+      fd.append("email", pharmacy?.email ?? "");
       fd.append("address", v.address.trim());
       if (file) fd.append("logo", file);
       return pharmacyApi.updateMe(fd);

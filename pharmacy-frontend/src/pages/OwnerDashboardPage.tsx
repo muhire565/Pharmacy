@@ -151,13 +151,13 @@ export function OwnerDashboardPage() {
 
   return (
     <div className="mx-auto max-w-6xl space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <div className="rounded-2xl border border-ink/10 bg-gradient-to-r from-primary/10 via-accent/10 to-transparent px-5 py-4 shadow-card">
+      <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
+        <div className="min-w-0">
+          <div className="rounded-2xl border border-ink/10 bg-gradient-to-r from-primary/10 via-accent/10 to-transparent px-4 py-3 shadow-card sm:px-5 sm:py-4">
             <p className="text-sm font-medium uppercase tracking-wide text-ink-muted">
               {greeting}
             </p>
-            <h1 className="mt-1 text-3xl font-semibold leading-tight text-ink">
+            <h1 className="mt-1 text-2xl font-semibold leading-tight text-ink sm:text-3xl">
               System Owner
             </h1>
             <p className="mt-1 text-sm text-ink-muted">{dayTime}</p>
@@ -165,7 +165,7 @@ export function OwnerDashboardPage() {
         </div>
         <Button
           variant="secondary"
-          className="gap-2"
+          className="w-full shrink-0 gap-2 sm:w-auto"
           onClick={() => {
             qc.clear();
             logout();
@@ -211,15 +211,16 @@ export function OwnerDashboardPage() {
         <CardHeader
           title="Pharmacies"
           action={
-            <div className="flex items-center gap-2">
+            <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
               <Input
                 placeholder="Search name / email / phone…"
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
-                className="w-72"
+                className="min-w-0 w-full sm:w-72"
               />
               <Button
                 variant="secondary"
+                className="w-full shrink-0 sm:w-auto"
                 onClick={() => void qc.invalidateQueries({ queryKey: ["owner", "pharmacies"] })}
               >
                 Refresh

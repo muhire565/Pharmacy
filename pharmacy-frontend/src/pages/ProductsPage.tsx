@@ -87,7 +87,7 @@ export function ProductsPage() {
       category: "",
       barcode: "",
       price: 0,
-      supplierId: null,
+      supplierId: undefined,
     },
   });
 
@@ -99,7 +99,7 @@ export function ProductsPage() {
       category: "",
       barcode: "",
       price: 0,
-      supplierId: null,
+      supplierId: undefined,
     });
     setModalOpen(true);
   };
@@ -112,7 +112,7 @@ export function ProductsPage() {
       category: p.category ?? "",
       barcode: p.barcode,
       price: p.price,
-      supplierId: p.supplierId ?? null,
+      supplierId: p.supplierId ?? undefined,
     });
     setModalOpen(true);
   };
@@ -334,7 +334,7 @@ export function ProductsPage() {
       >
         <form
           className="grid gap-4 sm:grid-cols-2"
-          onSubmit={form.handleSubmit((v) => saveMut.mutate(v))}
+          onSubmit={form.handleSubmit((v: ProductForm) => saveMut.mutate(v))}
         >
           <Input label="Name" error={form.formState.errors.name?.message} {...form.register("name")} />
           <Input label="Category" {...form.register("category")} />
