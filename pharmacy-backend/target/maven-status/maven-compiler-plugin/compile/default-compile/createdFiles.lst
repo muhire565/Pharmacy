@@ -32,6 +32,7 @@ com\pharmacy\dto\PosDraftSyncRequest.class
 com\pharmacy\mapper\ProductMapper.class
 com\pharmacy\dto\ProductInventorySummaryResponse$ProductInventorySummaryResponseBuilder.class
 com\pharmacy\entity\Role.class
+com\pharmacy\config\RenderDataSourceEnvironmentPostProcessor.class
 com\pharmacy\dto\SaleResponse.class
 com\pharmacy\dto\SupplierResponse$SupplierResponseBuilder.class
 com\pharmacy\config\JwtProperties.class
@@ -62,6 +63,7 @@ com\pharmacy\entity\AuditLog.class
 com\pharmacy\repository\SupplierRepository.class
 com\pharmacy\service\LiveUpdatesService$1.class
 com\pharmacy\controller\StockMovementController.class
+com\pharmacy\config\RenderDataSourceEnvironmentPostProcessor$Parsed.class
 com\pharmacy\entity\Sale$SaleBuilder.class
 com\pharmacy\entity\Supplier.class
 com\pharmacy\service\ProductService.class
