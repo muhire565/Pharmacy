@@ -23,7 +23,12 @@ public class RenderDataSourceEnvironmentPostProcessor implements EnvironmentPost
 
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
-        String raw = environment.getProperty("SPRING_DATASOURCE_URL");
+        // Prefer direct env vars, then resolved spring.datasource.url (e.g. from application-prod.properties).
+        String raw = firstNonBlank(
+                environment.getProperty("SPRING_DATASOURCE_URL"),
+                environment.getProperty("DATABASE_URL"),
+                environment.getProperty("spring.datasource.url"));
+
         if (raw == null || raw.isBlank()) {
             return;
         }
@@ -35,7 +40,8 @@ public class RenderDataSourceEnvironmentPostProcessor implements EnvironmentPost
         Map<String, Object> overrides = new HashMap<>();
 
         if (raw.startsWith("//")) {
-            overrides.put("spring.datasource.url", "jdbc:postgresql:" + raw);
+            String jdbc = "jdbc:postgresql:" + raw;
+            putDatasourceAndFlyway(overrides, jdbc, environment);
             addOverrides(environment, overrides);
             return;
         }
@@ -43,15 +49,38 @@ public class RenderDataSourceEnvironmentPostProcessor implements EnvironmentPost
         if (raw.startsWith("postgres://") || raw.startsWith("postgresql://")) {
             Parsed parsed = parsePostgresUri(raw);
             if (parsed != null) {
-                overrides.put("spring.datasource.url", parsed.jdbcUrl);
+                putDatasourceAndFlyway(overrides, parsed.jdbcUrl, environment);
                 if (parsed.username != null && isUnset(environment, "SPRING_DATASOURCE_USERNAME")) {
                     overrides.put("spring.datasource.username", parsed.username);
+                    overrides.put("spring.flyway.user", parsed.username);
                 }
                 if (parsed.password != null && isUnset(environment, "SPRING_DATASOURCE_PASSWORD")) {
                     overrides.put("spring.datasource.password", parsed.password);
+                    overrides.put("spring.flyway.password", parsed.password);
                 }
                 addOverrides(environment, overrides);
             }
+        }
+    }
+
+    private static String firstNonBlank(String a, String b, String c) {
+        if (a != null && !a.isBlank()) return a;
+        if (b != null && !b.isBlank()) return b;
+        if (c != null && !c.isBlank()) return c;
+        return null;
+    }
+
+    private static void putDatasourceAndFlyway(
+            Map<String, Object> overrides, String jdbcUrl, ConfigurableEnvironment environment) {
+        overrides.put("spring.datasource.url", jdbcUrl);
+        overrides.put("spring.flyway.url", jdbcUrl);
+        String user = environment.getProperty("SPRING_DATASOURCE_USERNAME");
+        if (user != null && !user.isBlank()) {
+            overrides.put("spring.flyway.user", user);
+        }
+        String pass = environment.getProperty("SPRING_DATASOURCE_PASSWORD");
+        if (pass != null && !pass.isBlank()) {
+            overrides.put("spring.flyway.password", pass);
         }
     }
 
@@ -64,12 +93,21 @@ public class RenderDataSourceEnvironmentPostProcessor implements EnvironmentPost
         if (overrides.isEmpty()) {
             return;
         }
+        // Run after ConfigData loads application-*.properties, then addFirst so we win over
+        // spring.datasource.url=${SPRING_DATASOURCE_URL} (broken //… URLs from the dashboard).
+        if (environment.getPropertySources().get(SOURCE_NAME) != null) {
+            environment.getPropertySources().remove(SOURCE_NAME);
+        }
         environment.getPropertySources().addFirst(new MapPropertySource(SOURCE_NAME, overrides));
     }
 
+    /**
+     * Lowest precedence = invoked after other EnvironmentPostProcessors (including config data),
+     * so our property source is registered last and resolves first.
+     */
     @Override
     public int getOrder() {
-        return Ordered.HIGHEST_PRECEDENCE;
+        return Ordered.LOWEST_PRECEDENCE;
     }
 
     private static final class Parsed {
