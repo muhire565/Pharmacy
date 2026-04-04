@@ -37,6 +37,7 @@ public class FileStorageService {
         try {
             Path root = Path.of(properties.getUploadDir()).toAbsolutePath().normalize();
             Path dir = root.resolve(String.valueOf(pharmacyId));
+            Files.createDirectories(root);
             Files.createDirectories(dir);
             Path target = dir.resolve("logo." + ext).normalize();
             if (!target.startsWith(root)) {
@@ -45,7 +46,11 @@ public class FileStorageService {
             Files.copy(file.getInputStream(), target, StandardCopyOption.REPLACE_EXISTING);
             return pharmacyId + "/logo." + ext;
         } catch (IOException e) {
-            throw new BusinessRuleException("Could not store logo: " + e.getMessage());
+            throw new BusinessRuleException(
+                    "Could not store logo under "
+                            + properties.getUploadDir()
+                            + ". On cloud hosts use a writable path (e.g. ./uploads/pharmacies) or mount a disk. "
+                            + e.getMessage());
         }
     }
 

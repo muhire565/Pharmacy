@@ -27,3 +27,6 @@ services:
         sync: false
       - key: CORS_ORIGINS
         sync: false
+      # Optional: persistent logo uploads (default ./uploads/pharmacies in container is ephemeral)
+      # - key: APP_STORAGE_UPLOAD_DIR
+      #   value: /var/pharmacy-uploads
