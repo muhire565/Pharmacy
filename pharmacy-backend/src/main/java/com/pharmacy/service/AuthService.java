@@ -45,19 +45,22 @@ public class AuthService {
         }
 
         var ph = user.getPharmacy();
-        String token = jwtTokenProvider.createToken(user.getId(), user.getEmail(), ph.getId(), user.getRole());
-        String logoUrl = (user.getRole() != Role.SYSTEM_OWNER && ph.getLogoPath() != null)
+        Long pharmacyIdForToken = ph != null ? ph.getId() : null;
+        String token = jwtTokenProvider.createToken(user.getId(), user.getEmail(), pharmacyIdForToken, user.getRole());
+        String logoUrl = (user.getRole() != Role.SYSTEM_OWNER && ph != null && ph.getLogoPath() != null)
                 ? apiProperties.getPrefix() + "/pharmacies/me/logo"
                 : null;
+        String currencyCode = (ph != null) ? ph.getCurrencyCode() : null;
         return LoginResponse.builder()
                 .token(token)
                 .tokenType("Bearer")
                 .expiresInMs(jwtProperties.getExpirationMs())
                 .email(user.getEmail())
                 .role(user.getRole())
-                .pharmacyId(user.getRole() == Role.SYSTEM_OWNER ? null : ph.getId())
-                .pharmacyName(user.getRole() == Role.SYSTEM_OWNER ? "System Owner" : ph.getName())
+                .pharmacyId(user.getRole() == Role.SYSTEM_OWNER ? null : ph != null ? ph.getId() : null)
+                .pharmacyName(user.getRole() == Role.SYSTEM_OWNER ? "System Owner" : ph != null ? ph.getName() : null)
                 .logoUrl(logoUrl)
+                .currencyCode(currencyCode)
                 .build();
     }
 }

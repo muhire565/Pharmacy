@@ -63,6 +63,7 @@ com\pharmacy\entity\AuditLog.class
 com\pharmacy\repository\SupplierRepository.class
 com\pharmacy\service\LiveUpdatesService$1.class
 com\pharmacy\controller\StockMovementController.class
+com\pharmacy\util\PharmacyCurrency.class
 com\pharmacy\config\RenderDataSourceEnvironmentPostProcessor$Parsed.class
 com\pharmacy\entity\Sale$SaleBuilder.class
 com\pharmacy\entity\Supplier.class

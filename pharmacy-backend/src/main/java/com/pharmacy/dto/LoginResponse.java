@@ -15,4 +15,6 @@ public class LoginResponse {
     Long pharmacyId;
     String pharmacyName;
     String logoUrl;
+    /** ISO 4217 when user belongs to a pharmacy; null for system owner */
+    String currencyCode;
 }

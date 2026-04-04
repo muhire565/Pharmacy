@@ -14,6 +14,8 @@ export interface LoginResponse {
   pharmacyId: number | null;
   pharmacyName: string | null;
   logoUrl?: string | null;
+  /** RWF | UGX | USD when user belongs to a pharmacy */
+  currencyCode?: string | null;
 }
 
 export interface OwnerPharmacy {
@@ -55,6 +57,7 @@ export interface PharmacyResponse {
   phoneE164: string;
   email: string;
   address: string;
+  currencyCode: string;
   logoUrl?: string | null;
   defaultCashierEmail?: string | null;
   defaultCashierPassword?: string | null;

@@ -24,8 +24,9 @@ public class PharmacyRegistrationController {
             @RequestParam String email,
             @RequestParam String address,
             @RequestParam String adminPassword,
+            @RequestParam(required = false) String currencyCode,
             @RequestPart("logo") MultipartFile logo) {
         return registrationService.register(
-                pharmacyName, countryCode, phone, email, address, adminPassword, logo);
+                pharmacyName, countryCode, phone, email, address, adminPassword, currencyCode, logo);
     }
 }

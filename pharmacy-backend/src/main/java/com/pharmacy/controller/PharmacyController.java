@@ -36,9 +36,10 @@ public class PharmacyController {
             @RequestParam String phone,
             @RequestParam String email,
             @RequestParam String address,
+            @RequestParam(required = false) String currencyCode,
             @RequestPart(value = "logo", required = false) MultipartFile logo) {
         return pharmacyProfileService.updateMine(
-                pharmacyName, countryCode, phone, email, address, logo);
+                pharmacyName, countryCode, phone, email, address, currencyCode, logo);
     }
 
     @GetMapping("/me/logo")
@@ -62,10 +63,11 @@ public class PharmacyController {
             @RequestParam String phone,
             @RequestParam String email,
             @RequestParam String address,
+            @RequestParam(required = false) String currencyCode,
             @RequestPart(value = "logo", required = false) MultipartFile logo) {
         requireOwnPharmacy(id);
         return pharmacyProfileService.updateMine(
-                pharmacyName, countryCode, phone, email, address, logo);
+                pharmacyName, countryCode, phone, email, address, currencyCode, logo);
     }
 
     private void requireOwnPharmacy(Long id) {

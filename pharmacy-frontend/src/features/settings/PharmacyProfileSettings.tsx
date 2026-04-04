@@ -11,6 +11,12 @@ import { tenantKey } from "@/utils/tenantQuery";
 import { Card, CardHeader } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import {
+  PHARMACY_CURRENCIES,
+  PHARMACY_CURRENCY_LABELS,
+  parsePharmacyCurrency,
+  type PharmacyCurrency,
+} from "@/constants/currency";
 
 const nameRe = /^[a-zA-Z0-9\s]{1,100}$/;
 
@@ -23,6 +29,7 @@ const schema = z.object({
   countryCode: z.string().length(2, "Two-letter country code"),
   phone: z.string().min(1, "Required"),
   address: z.string().min(1).max(250),
+  currencyCode: z.enum(PHARMACY_CURRENCIES),
 });
 
 type Form = z.infer<typeof schema>;
@@ -49,6 +56,7 @@ export function PharmacyProfileSettings() {
       countryCode: "",
       phone: "",
       address: "",
+      currencyCode: "RWF" satisfies PharmacyCurrency,
     },
   });
 
@@ -59,6 +67,7 @@ export function PharmacyProfileSettings() {
       countryCode: pharmacy.countryCode,
       phone: pharmacy.phoneE164,
       address: pharmacy.address,
+      currencyCode: parsePharmacyCurrency(pharmacy.currencyCode),
     });
   }, [pharmacy, form]);
 
@@ -77,11 +86,16 @@ export function PharmacyProfileSettings() {
       fd.append("phone", v.phone.trim());
       fd.append("email", pharmacy?.email ?? "");
       fd.append("address", v.address.trim());
+      fd.append("currencyCode", v.currencyCode);
       if (file) fd.append("logo", file);
       return pharmacyApi.updateMe(fd);
     },
     onSuccess: (data, file) => {
-      setBranding({ pharmacyName: data.name, logoUrl: data.logoUrl ?? null });
+      setBranding({
+        pharmacyName: data.name,
+        logoUrl: data.logoUrl ?? null,
+        currencyCode: parsePharmacyCurrency(data.currencyCode),
+      });
       if (file) bumpLogo();
       setLogoFile(null);
       if (logoPreview) URL.revokeObjectURL(logoPreview);
@@ -140,6 +154,30 @@ export function PharmacyProfileSettings() {
             error={form.formState.errors.phone?.message}
             {...form.register("phone")}
           />
+        </div>
+        <div className="space-y-1.5">
+          <label className="text-sm font-medium text-ink" htmlFor="pharmacy-currency">
+            Display currency
+          </label>
+          <select
+            id="pharmacy-currency"
+            className="w-full rounded-lg border border-ink/15 bg-surface px-3 py-2 text-sm text-ink outline-none ring-primary/30 focus:ring-2"
+            {...form.register("currencyCode")}
+          >
+            {PHARMACY_CURRENCIES.map((c) => (
+              <option key={c} value={c}>
+                {PHARMACY_CURRENCY_LABELS[c]}
+              </option>
+            ))}
+          </select>
+          <p className="text-xs text-ink-muted">
+            Prices and totals update everywhere for all staff after you save.
+          </p>
+          {form.formState.errors.currencyCode ? (
+            <p className="text-sm text-danger">
+              {form.formState.errors.currencyCode.message}
+            </p>
+          ) : null}
         </div>
         <div className="space-y-1">
           <p className="text-xs font-medium text-ink-muted">Login email</p>

@@ -8,6 +8,7 @@ import com.pharmacy.entity.User;
 import com.pharmacy.exception.BusinessRuleException;
 import com.pharmacy.repository.PharmacyRepository;
 import com.pharmacy.repository.UserRepository;
+import com.pharmacy.util.PharmacyCurrency;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -38,6 +39,7 @@ public class PharmacyRegistrationService {
             String email,
             String address,
             String adminPassword,
+            String currencyCode,
             MultipartFile logo) {
 
         String name = pharmacyName == null ? "" : pharmacyName.trim();
@@ -64,6 +66,7 @@ public class PharmacyRegistrationService {
             throw new BusinessRuleException("Invalid country code");
         }
         String e164 = phoneValidationService.toE164(cc, phone);
+        String cur = PharmacyCurrency.normalizeOrDefault(currencyCode);
 
         Pharmacy pharmacy = Pharmacy.builder()
                 .name(name)
@@ -71,6 +74,8 @@ public class PharmacyRegistrationService {
                 .phoneE164(e164)
                 .email(em)
                 .address(addr)
+                .currencyCode(cur)
+                .locked(false)
                 .build();
         pharmacy = pharmacyRepository.save(pharmacy);
 
@@ -111,6 +116,7 @@ public class PharmacyRegistrationService {
                 .phoneE164(p.getPhoneE164())
                 .email(p.getEmail())
                 .address(p.getAddress())
+                .currencyCode(p.getCurrencyCode())
                 .logoUrl(p.getLogoPath() != null
                         ? apiProperties.getPrefix() + "/public/pharmacies/" + p.getId() + "/logo"
                         : null)

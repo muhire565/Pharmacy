@@ -10,6 +10,7 @@ import com.pharmacy.exception.ResourceNotFoundException;
 import com.pharmacy.repository.PharmacyRepository;
 import com.pharmacy.repository.UserRepository;
 import com.pharmacy.security.SecurityUtils;
+import com.pharmacy.util.PharmacyCurrency;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -48,6 +49,7 @@ public class PharmacyProfileService {
             String phone,
             String email,
             String address,
+            String currencyCode,
             MultipartFile logo) {
 
         if (SecurityUtils.requirePharmacyUser().getRole() != Role.PHARMACY_ADMIN) {
@@ -91,11 +93,14 @@ public class PharmacyProfileService {
         }
         String e164 = phoneValidationService.toE164(cc, phone);
 
+        String cur = PharmacyCurrency.normalizeForUpdate(currencyCode, p.getCurrencyCode());
+
         p.setName(name);
         p.setCountryCode(cc);
         p.setPhoneE164(e164);
         p.setEmail(em);
         p.setAddress(addr);
+        p.setCurrencyCode(cur);
 
         if (logo != null && !logo.isEmpty()) {
             String logoRel = fileStorageService.savePharmacyLogo(p.getId(), logo);
@@ -139,6 +144,7 @@ public class PharmacyProfileService {
                 .phoneE164(p.getPhoneE164())
                 .email(p.getEmail())
                 .address(p.getAddress())
+                .currencyCode(p.getCurrencyCode())
                 .logoUrl(p.getLogoPath() != null ? apiProperties.getPrefix() + "/pharmacies/me/logo" : null)
                 .defaultCashierEmail(null)
                 .defaultCashierPassword(null)

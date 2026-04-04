@@ -1,0 +1,11 @@
+# Netlify site settings when this folder is the deploy base directory.
+# In Netlify: Site settings → Build & deploy → Base directory = pharmacy-frontend (if deploying from monorepo root).
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

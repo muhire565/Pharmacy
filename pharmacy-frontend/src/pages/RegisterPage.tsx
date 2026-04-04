@@ -22,6 +22,11 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { LogoUploadModal } from "@/components/register/LogoUploadModal";
+import {
+  PHARMACY_CURRENCIES,
+  PHARMACY_CURRENCY_LABELS,
+  type PharmacyCurrency,
+} from "@/constants/currency";
 
 const nameRe = /^[a-zA-Z0-9\s]{1,100}$/;
 
@@ -46,6 +51,7 @@ const schema = z.object({
       "Include at least one letter and one number"
     ),
   confirmPassword: z.string().min(8, "Confirm your password"),
+  currencyCode: z.enum(PHARMACY_CURRENCIES),
 }).refine((v) => v.adminPassword === v.confirmPassword, {
   path: ["confirmPassword"],
   message: "Passwords do not match",
@@ -90,6 +96,7 @@ export function RegisterPage() {
       address: "",
       adminPassword: "",
       confirmPassword: "",
+      currencyCode: "RWF" satisfies PharmacyCurrency,
     },
     mode: "onTouched",
   });
@@ -119,6 +126,7 @@ export function RegisterPage() {
       fd.append("email", v.email.trim().toLowerCase());
       fd.append("address", v.address.trim());
       fd.append("adminPassword", v.adminPassword);
+      fd.append("currencyCode", v.currencyCode);
       fd.append("logo", logoFile);
       return publicApi.registerPharmacy(fd);
     },
@@ -138,7 +146,7 @@ export function RegisterPage() {
     {
       title: "Pharmacy details",
       icon: Building2,
-      fields: ["pharmacyName", "countryCode", "phone"] as const,
+      fields: ["pharmacyName", "countryCode", "phone", "currencyCode"] as const,
     },
     {
       title: "Contact & branding",
@@ -365,6 +373,26 @@ export function RegisterPage() {
                 />
                 <p className="text-xs text-ink-muted">
                   Dial code is added when you select a country — complete the rest of the number.
+                </p>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-ink" htmlFor="reg-currency">
+                  Display currency
+                </label>
+                <select
+                  id="reg-currency"
+                  className="w-full rounded-lg border border-ink/15 bg-surface px-3 py-2 text-sm text-ink outline-none ring-primary/30 focus:ring-2"
+                  {...form.register("currencyCode")}
+                >
+                  {PHARMACY_CURRENCIES.map((c) => (
+                    <option key={c} value={c}>
+                      {PHARMACY_CURRENCY_LABELS[c]}
+                    </option>
+                  ))}
+                </select>
+                <p className="text-xs text-ink-muted">
+                  Default is RWF. You can change this later in Settings.
                 </p>
               </div>
             </>

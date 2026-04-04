@@ -9,6 +9,7 @@ import { pharmacyApi } from "@/api/queries";
 import { getLiveSocketUrl } from "@/utils/liveSocket";
 import { tenantKey } from "@/utils/tenantQuery";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { parsePharmacyCurrency } from "@/constants/currency";
 
 export function AppShell() {
   const token = useAuthStore((s) => s.token);
@@ -33,8 +34,17 @@ export function AppShell() {
     if (!profile) return;
     const s = useAuthStore.getState();
     const nextLogo = profile.logoUrl ?? null;
-    if (s.pharmacyName !== profile.name || s.logoUrl !== nextLogo) {
-      setBranding({ pharmacyName: profile.name, logoUrl: nextLogo });
+    const nextCur = parsePharmacyCurrency(profile.currencyCode);
+    if (
+      s.pharmacyName !== profile.name ||
+      s.logoUrl !== nextLogo ||
+      s.currencyCode !== nextCur
+    ) {
+      setBranding({
+        pharmacyName: profile.name,
+        logoUrl: nextLogo,
+        currencyCode: nextCur,
+      });
     }
   }, [profile, setBranding]);
 

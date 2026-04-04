@@ -1,6 +1,8 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import type { LoginResponse, Role } from "@/api/types";
+import type { PharmacyCurrency } from "@/constants/currency";
+import { parsePharmacyCurrency } from "@/constants/currency";
 
 interface AuthState {
   token: string | null;
@@ -9,10 +11,16 @@ interface AuthState {
   pharmacyId: number | null;
   pharmacyName: string | null;
   logoUrl: string | null;
+  /** ISO 4217 display currency for pharmacy users */
+  currencyCode: PharmacyCurrency;
   /** Bumps when branding changes so logo blob refetches */
   brandingVersion: number;
   setAuth: (data: LoginResponse) => void;
-  setBranding: (p: { pharmacyName?: string; logoUrl?: string | null }) => void;
+  setBranding: (p: {
+    pharmacyName?: string;
+    logoUrl?: string | null;
+    currencyCode?: PharmacyCurrency;
+  }) => void;
   /** Refetch logo blob when the file changed but URL path stayed the same */
   bumpLogo: () => void;
   logout: () => void;
@@ -27,6 +35,7 @@ export const useAuthStore = create<AuthState>()(
       pharmacyId: null,
       pharmacyName: null,
       logoUrl: null,
+      currencyCode: "RWF",
       brandingVersion: 0,
       setAuth: (data) =>
         set({
@@ -36,16 +45,20 @@ export const useAuthStore = create<AuthState>()(
           pharmacyId: data.pharmacyId,
           pharmacyName: data.pharmacyName,
           logoUrl: data.logoUrl ?? null,
+          currencyCode: parsePharmacyCurrency(data.currencyCode),
           brandingVersion: 0,
         }),
       setBranding: (p) =>
         set((s) => {
           const nextName = p.pharmacyName ?? s.pharmacyName;
           const nextLogo = p.logoUrl !== undefined ? p.logoUrl : s.logoUrl;
+          const nextCurrency =
+            p.currencyCode !== undefined ? p.currencyCode : s.currencyCode;
           const logoChanged = nextLogo !== s.logoUrl;
           return {
             pharmacyName: nextName,
             logoUrl: nextLogo,
+            currencyCode: nextCurrency,
             brandingVersion: logoChanged ? s.brandingVersion + 1 : s.brandingVersion,
           };
         }),
@@ -61,11 +74,12 @@ export const useAuthStore = create<AuthState>()(
           pharmacyId: null,
           pharmacyName: null,
           logoUrl: null,
+          currencyCode: "RWF",
           brandingVersion: 0,
         }),
     }),
     {
-      name: "pharmacy-auth-v2",
+      name: "pharmacy-auth-v3",
       storage: createJSONStorage(() => sessionStorage),
       partialize: (s) => ({
         token: s.token,
@@ -74,6 +88,7 @@ export const useAuthStore = create<AuthState>()(
         pharmacyId: s.pharmacyId,
         pharmacyName: s.pharmacyName,
         logoUrl: s.logoUrl,
+        currencyCode: s.currencyCode,
       }),
     }
   )

@@ -1,0 +1,2 @@
+ALTER TABLE pharmacies
+    ADD COLUMN currency_code VARCHAR(3) NOT NULL DEFAULT 'RWF';

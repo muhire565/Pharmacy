@@ -1,0 +1,2 @@
+# SPA fallback: serve index.html for client-side routes (refresh, deep links)
+/*    /index.html   200

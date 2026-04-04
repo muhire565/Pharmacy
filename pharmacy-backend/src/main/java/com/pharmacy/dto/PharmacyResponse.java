@@ -12,6 +12,7 @@ public class PharmacyResponse {
     String phoneE164;
     String email;
     String address;
+    String currencyCode;
     String logoUrl;
     String defaultCashierEmail;
     String defaultCashierPassword;

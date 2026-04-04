@@ -39,6 +39,10 @@ public class Pharmacy {
     @Column(nullable = false, length = 250)
     private String address;
 
+    /** ISO 4217: RWF, UGX, USD */
+    @Column(name = "currency_code", nullable = false, length = 3)
+    private String currencyCode;
+
     @Column(nullable = false)
     private boolean locked;
 
@@ -55,6 +59,11 @@ public class Pharmacy {
     void prePersist() {
         if (createdAt == null) {
             createdAt = Instant.now();
+        }
+        if (currencyCode == null || currencyCode.isBlank()) {
+            currencyCode = "RWF";
+        } else {
+            currencyCode = currencyCode.trim().toUpperCase();
         }
     }
 }
