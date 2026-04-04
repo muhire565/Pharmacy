@@ -18,4 +18,4 @@ COPY --from=build /app/target/app.jar /app/app.jar
 ENV PORT=8080
 EXPOSE 8080
 
-ENTRYPOINT ["sh", "-c", "exec java ${JAVA_OPTS:-} -jar /app/app.jar --server.address=0.0.0.0 --server.port=${PORT}"]
+ENTRYPOINT ["sh", "-c", "export SERVER_PORT=$PORT; exec java -XX:TieredStopAtLevel=1 ${JAVA_OPTS:-} -jar /app/app.jar --server.address=0.0.0.0 --server.port=$PORT"]

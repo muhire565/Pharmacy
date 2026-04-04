@@ -1,5 +1,9 @@
 # Render Blueprint: New → Blueprint → connect repo.
 # Create a PostgreSQL instance, then set secret env vars on the web service (Dashboard or here with sync: false).
+#
+# If logs show “No open ports detected” until the app is up: Spring cold start can take 1–3 min on
+# starter hardware. In the Render dashboard → Health Checks, increase “Health Check Grace Period”
+# (e.g. 180–300s) so the first deploy isn’t marked unhealthy while the JVM + Flyway + DB connect.
 
 services:
   - type: web

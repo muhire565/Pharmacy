@@ -25,5 +25,6 @@ COPY --from=build /app/target/app.jar /app/app.jar
 ENV PORT=8080
 EXPOSE 8080
 
-# Render injects PORT; bind on all interfaces for the platform proxy.
-ENTRYPOINT ["sh", "-c", "exec java ${JAVA_OPTS:-} -jar /app/app.jar --server.address=0.0.0.0 --server.port=${PORT}"]
+# Render sets PORT at runtime. Export SERVER_PORT for Spring relaxed binding.
+# -XX:TieredStopAtLevel=1 reduces JIT warmup time a bit on small instances.
+ENTRYPOINT ["sh", "-c", "export SERVER_PORT=$PORT; exec java -XX:TieredStopAtLevel=1 ${JAVA_OPTS:-} -jar /app/app.jar --server.address=0.0.0.0 --server.port=$PORT"]
