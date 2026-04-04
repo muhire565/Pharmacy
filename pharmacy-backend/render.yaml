@@ -1,0 +1,30 @@
+# Render Blueprint (use from repo root: path ./pharmacy-backend/render.yaml is not auto-discovered;
+# either paste into root render.yaml or create the service manually with root directory pharmacy-backend).
+#
+# Spring expects JDBC URLs. Render’s Postgres "External Database URL" is often postgres://…;
+# set SPRING_DATASOURCE_URL to jdbc:postgresql://HOST:PORT/DBNAME and matching user/password,
+# or map from a linked database’s connection settings in the dashboard.
+
+services:
+  - type: web
+    name: pharmacy-backend
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: SPRING_DATASOURCE_URL
+        sync: false
+      - key: SPRING_DATASOURCE_USERNAME
+        sync: false
+      - key: SPRING_DATASOURCE_PASSWORD
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+      - key: APP_STORAGE_UPLOAD_DIR
+        sync: false
+      # Optional: JWT_EXPIRATION_MS, APP_DATA_SEED

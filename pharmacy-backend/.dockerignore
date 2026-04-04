@@ -1,0 +1,26 @@
+# Build output
+target/
+
+# VCS / IDE
+.git
+.gitignore
+.idea
+*.iml
+.vscode
+
+# Local data (never bake into image)
+uploads/
+**/uploads/
+
+# Secrets and local env
+.env
+.env.*
+*.local
+
+# Logs
+logs/
+*.log
+
+# OS / misc
+.DS_Store
+Thumbs.db
