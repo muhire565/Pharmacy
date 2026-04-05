@@ -69,6 +69,7 @@ public class SecurityConfig {
                         .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                         .accessDeniedHandler(jwtAccessDeniedHandler))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.GET, "/").permitAll()
                         .requestMatchers(api + "/auth/**").permitAll()
                         .requestMatchers(api + "/public/**").permitAll()
                         .requestMatchers(HttpMethod.POST, api + "/pharmacies/register").permitAll()

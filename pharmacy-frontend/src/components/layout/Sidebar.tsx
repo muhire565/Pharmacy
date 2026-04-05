@@ -106,7 +106,7 @@ export function Sidebar({ mobileExpanded, setMobileExpanded, isDesktop }: Sideba
 
       <aside
         className={cn(
-          "flex shrink-0 flex-col border-r border-ink/10 bg-gradient-to-b from-surface via-surface to-muted/40 shadow-[4px_0_32px_-16px_rgb(30_58_95/0.18)] transition-[width,transform] duration-200 ease-out",
+          "flex h-full min-h-0 shrink-0 flex-col border-r border-ink/10 bg-gradient-to-b from-surface via-surface to-muted/40 shadow-[4px_0_32px_-16px_rgb(30_58_95/0.18)] transition-[width,transform] duration-200 ease-out",
           isDesktop && "relative w-[15.5rem]",
           !isDesktop && !mobileExpanded && "relative z-[36] w-[3.25rem]",
           !isDesktop &&

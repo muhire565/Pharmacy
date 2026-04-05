@@ -70,7 +70,9 @@ export default function App() {
             path="/app"
             element={
               <ProtectedRoute>
-                <AppShell />
+                <div className="flex h-[100dvh] max-h-[100dvh] min-h-0 w-full flex-col overflow-hidden">
+                  <AppShell />
+                </div>
               </ProtectedRoute>
             }
           >

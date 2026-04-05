@@ -49,6 +49,7 @@ C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\repository\UserRepository.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\config\ApiProperties.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\service\InventoryService.java
+C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\controller\RootController.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\dto\CashierCreateRequest.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\dto\MedicineSoldRowResponse.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\config\AppMailProperties.java

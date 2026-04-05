@@ -19,7 +19,7 @@ export function Topbar({ isDesktop, onMenuClick }: TopbarProps) {
   const debounced = useDebounce(q, 350);
 
   return (
-    <header className="relative z-10 shrink-0 border-b border-ink/10 bg-surface/90 shadow-[0_1px_0_rgb(var(--surface))] backdrop-blur-md supports-[backdrop-filter]:bg-surface/75">
+    <header className="relative z-10 shrink-0 border-b border-ink/10 bg-surface/95 shadow-[0_1px_0_rgb(var(--surface))] backdrop-blur-md supports-[backdrop-filter]:bg-surface/80">
       {!isDesktop ? (
         <Button
           type="button"

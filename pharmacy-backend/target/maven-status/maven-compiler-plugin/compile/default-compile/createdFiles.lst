@@ -133,6 +133,7 @@ com\pharmacy\service\CountriesService.class
 com\pharmacy\dto\ProductResponse$ProductResponseBuilder.class
 com\pharmacy\config\OpenApiConfig.class
 com\pharmacy\dto\OwnerPharmacyUpdateRequest.class
+com\pharmacy\controller\RootController.class
 com\pharmacy\repository\ExpenseRepository.class
 com\pharmacy\service\CurrentUserService.class
 com\pharmacy\dto\OwnerLockRequest.class

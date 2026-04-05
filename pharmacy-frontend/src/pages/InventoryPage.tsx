@@ -28,11 +28,29 @@ import { cn } from "@/utils/cn";
 const batchSchema = z.object({
   batchNumber: z.string().min(1),
   expiryDate: z.string().min(1),
-  quantity: z.coerce.number().int().min(0),
+  quantity: z.coerce.number().int().min(1, "Quantity must be at least 1"),
   costPrice: z.coerce.number().min(0),
 });
 
 type BatchForm = z.infer<typeof batchSchema>;
+
+const quickRestockSchema = z.object({
+  quantity: z.coerce.number().int().min(1, "Quantity must be at least 1"),
+  costPrice: z.coerce.number().min(0),
+});
+
+type QuickRestockForm = z.infer<typeof quickRestockSchema>;
+
+/** YYYY-MM-DD well in the future; satisfies server @Future on batch expiry. */
+function autoRestockExpiryYmd(): string {
+  const d = new Date();
+  d.setDate(d.getDate() + 2);
+  d.setFullYear(d.getFullYear() + 5);
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
 
 function invQueryKeys(pharmacyId: number | null) {
   return {
@@ -52,6 +70,7 @@ export function InventoryPage() {
   const [selected, setSelected] = useState<ProductInventorySummary | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
   const [batchOpen, setBatchOpen] = useState(false);
+  const [quickOpen, setQuickOpen] = useState(false);
   const [batchScanOpen, setBatchScanOpen] = useState(false);
   const [movOpen, setMovOpen] = useState(false);
 
@@ -87,14 +106,23 @@ export function InventoryPage() {
     enabled: admin && movOpen && pharmacyId != null && activeProductId != null,
   });
 
+  const emptyBatchForm = (): BatchForm => ({
+    batchNumber: "",
+    expiryDate: "",
+    quantity: 1,
+    costPrice: 0,
+  });
+
   const form = useForm<BatchForm>({
     resolver: zodResolver(batchSchema),
-    defaultValues: {
-      batchNumber: "",
-      expiryDate: "",
-      quantity: 0,
-      costPrice: 0,
-    },
+    defaultValues: emptyBatchForm(),
+  });
+
+  const emptyQuickForm = (): QuickRestockForm => ({ quantity: 1, costPrice: 0 });
+
+  const quickForm = useForm<QuickRestockForm>({
+    resolver: zodResolver(quickRestockSchema),
+    defaultValues: emptyQuickForm(),
   });
 
   const invalidateProductQueries = (productId: number) => {
@@ -115,8 +143,27 @@ export function InventoryPage() {
     onSuccess: () => {
       toast.success("Batch added");
       setBatchOpen(false);
-      form.reset();
+      form.reset(emptyBatchForm());
       if (activeProductId != null) invalidateProductQueries(activeProductId);
+    },
+    onError: (e) => toast.error(getApiErrorMessage(e)),
+  });
+
+  const quickRestock = useMutation({
+    mutationFn: (v: QuickRestockForm & { productId: number }) =>
+      batchesApi.create({
+        productId: v.productId,
+        batchNumber: `RS-${v.productId}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+        expiryDate: autoRestockExpiryYmd(),
+        quantity: v.quantity,
+        costPrice: v.costPrice,
+      }),
+    onSuccess: (_data, vars) => {
+      toast.success("Stock added");
+      setQuickOpen(false);
+      quickForm.reset(emptyQuickForm());
+      invalidateProductQueries(vars.productId);
+      if (!detailOpen && !batchOpen && !movOpen) setSelected(null);
     },
     onError: (e) => toast.error(getApiErrorMessage(e)),
   });
@@ -130,19 +177,27 @@ export function InventoryPage() {
     setDetailOpen(true);
   };
 
-  const openAddBatch = (row: ProductInventorySummary) => {
+  const openQuickRestock = (row: ProductInventorySummary) => {
     setSelected(row);
-    setBatchOpen(true);
+    quickForm.reset(emptyQuickForm());
+    setQuickOpen(true);
   };
 
   const closeDetail = () => {
     setDetailOpen(false);
-    if (!batchOpen && !movOpen) setSelected(null);
+    if (!batchOpen && !movOpen && !quickOpen) setSelected(null);
   };
 
   const closeBatchForm = () => {
     setBatchOpen(false);
-    if (!detailOpen && !movOpen) setSelected(null);
+    form.reset(emptyBatchForm());
+    if (!detailOpen && !movOpen && !quickOpen) setSelected(null);
+  };
+
+  const closeQuickRestock = () => {
+    setQuickOpen(false);
+    quickForm.reset(emptyQuickForm());
+    if (!detailOpen && !batchOpen && !movOpen) setSelected(null);
   };
 
   return (
@@ -151,7 +206,8 @@ export function InventoryPage() {
         <div>
           <h1 className="text-2xl font-semibold text-ink">Inventory</h1>
           <p className="text-sm text-ink-muted">
-            All products with stock totals; open a row for batches, movements, and receiving.
+            Admins: <Plus className="inline-block size-3.5 align-text-bottom" strokeWidth={2} /> quick
+            add (qty + optional cost). Open a row for batches, movements, or full batch / scan.
           </p>
         </div>
       </div>
@@ -192,7 +248,7 @@ export function InventoryPage() {
                   <Th className="text-right">Batches</Th>
                   <Th className="text-right">Total qty</Th>
                   <Th>Next expiry</Th>
-                  <Th className="w-44 text-right">Actions</Th>
+                  <Th className="w-16 text-right">Actions</Th>
                 </tr>
               </thead>
               <tbody>
@@ -220,7 +276,26 @@ export function InventoryPage() {
                       {row.supplierName ?? "—"}
                     </Td>
                     <Td className="text-right tabular-nums">{row.batchCount}</Td>
-                    <Td className="text-right tabular-nums font-medium">{row.totalQuantity}</Td>
+                    <Td className="text-right tabular-nums font-medium">
+                      <div className="inline-flex items-center justify-end gap-1">
+                        <span>{row.totalQuantity}</span>
+                        {admin ? (
+                          <Button
+                            type="button"
+                            variant="secondary"
+                            className="size-8 shrink-0 gap-0 p-0"
+                            aria-label={`Quick restock ${row.name}`}
+                            title="Quick restock"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openQuickRestock(row);
+                            }}
+                          >
+                            <Plus className="size-4" strokeWidth={2} />
+                          </Button>
+                        ) : null}
+                      </div>
+                    </Td>
                     <Td className="text-sm tabular-nums text-ink-muted">
                       {row.nearestExpiry ?? "—"}
                     </Td>
@@ -235,17 +310,6 @@ export function InventoryPage() {
                         >
                           <Eye className="size-4" />
                         </Button>
-                        {admin ? (
-                          <Button
-                            type="button"
-                            variant="secondary"
-                            className="h-8 gap-1 px-2 text-xs"
-                            onClick={() => openAddBatch(row)}
-                          >
-                            <Plus className="size-3.5" />
-                            Batch
-                          </Button>
-                        ) : null}
                       </div>
                     </Td>
                   </tr>
@@ -277,12 +341,23 @@ export function InventoryPage() {
                   <Activity className="size-4" /> Movements
                 </Button>
                 <Button
+                  variant="secondary"
                   className="gap-2"
                   onClick={() => {
+                    quickForm.reset(emptyQuickForm());
+                    setQuickOpen(true);
+                  }}
+                >
+                  <Plus className="size-4" /> Quick add
+                </Button>
+                <Button
+                  className="gap-2"
+                  onClick={() => {
+                    form.reset(emptyBatchForm());
                     setBatchOpen(true);
                   }}
                 >
-                  <Plus className="size-4" /> Add batch
+                  <Plus className="size-4" /> Full batch
                 </Button>
               </div>
             ) : null}
@@ -332,6 +407,61 @@ export function InventoryPage() {
             ) : null}
           </div>
         ) : null}
+      </Modal>
+
+      <Modal
+        open={quickOpen && selected != null}
+        onClose={closeQuickRestock}
+        title={selected ? `Quick restock — ${selected.name}` : "Quick restock"}
+      >
+        <form
+          className="space-y-3"
+          onSubmit={quickForm.handleSubmit((v) =>
+            quickRestock.mutate({ ...v, productId: selected!.productId })
+          )}
+        >
+          <p className="text-sm text-ink-muted">
+            Adds stock immediately with an auto batch code and long-dated expiry. Use{" "}
+            <strong>Full batch</strong> when you need a real lot number, exact expiry, or barcode
+            scan.
+          </p>
+          <Input
+            label="Quantity"
+            type="number"
+            autoFocus
+            {...quickForm.register("quantity")}
+            error={quickForm.formState.errors.quantity?.message}
+          />
+          <Input
+            label="Unit cost (optional)"
+            type="number"
+            step="0.01"
+            {...quickForm.register("costPrice")}
+            error={quickForm.formState.errors.costPrice?.message}
+          />
+          <div className="flex flex-col gap-2 pt-1 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+            <button
+              type="button"
+              className="text-left text-sm font-medium text-primary underline-offset-2 hover:underline"
+              onClick={() => {
+                setQuickOpen(false);
+                quickForm.reset(emptyQuickForm());
+                form.reset(emptyBatchForm());
+                setBatchOpen(true);
+              }}
+            >
+              Use full form (batch no., expiry, scan)…
+            </button>
+            <div className="flex justify-end gap-2 sm:ml-auto">
+              <Button type="button" variant="secondary" onClick={closeQuickRestock}>
+                Cancel
+              </Button>
+              <Button type="submit" loading={quickRestock.isPending}>
+                Add stock
+              </Button>
+            </div>
+          </div>
+        </form>
       </Modal>
 
       <Modal
@@ -427,7 +557,7 @@ export function InventoryPage() {
         open={movOpen && selected != null}
         onClose={() => {
           setMovOpen(false);
-          if (!detailOpen && !batchOpen) setSelected(null);
+          if (!detailOpen && !batchOpen && !quickOpen) setSelected(null);
         }}
         title={selected ? `Stock movements — ${selected.name}` : "Stock movements"}
         wide
