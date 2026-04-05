@@ -129,6 +129,25 @@
     "invalidRange": "Itariki yo gutangira igomba kuba mbere cyangwa ihuye n'iyo ya nyuma.",
     "loadError": "Raporo ntiyabashije kwinjira.",
     "generatedOn": "Byateguwe {{date}}",
+    "paymentsTreasuryTitle": "Kwishyura na trezori",
+    "periodPayments": "Kugurisha ku buryo bwishyura (igihe)",
+    "treasuryMovements": "Trezori (igihe)",
+    "estimatedDrawer": "Amafaranga ya cash mu kabati (approx)",
+    "estimatedDrawerHint": "Igihe cyose: kugurisha muri cash + cash winjiye − banki. Ntabwo harimo MoMo.",
+    "pay": {
+      "cash": "Cash",
+      "momoCode": "MoMo code",
+      "momoPhone": "MoMo telefoni"
+    },
+    "treasury": {
+      "cashIn": "Cash winjiye",
+      "bankDeposit": "Kubitsa muri banki"
+    },
+    "payMethodLabel": {
+      "CASH": "Cash",
+      "MOMO_CODE": "MoMo code",
+      "MOMO_PHONE": "MoMo telefoni"
+    },
     "kpi": {
       "sales": "Amafaranga yose y'kugurisha",
       "saleCount": "Ibikorwa {{count}}",
@@ -156,7 +175,8 @@
       "barcode": "Barcode",
       "time": "Igihe",
       "cashier": "Umucuruzi",
-      "total": "Igiteranyo"
+      "total": "Igiteranyo",
+      "payment": "Uburyo bwishyuza"
     },
     "empty": {
       "medicines": "Nta miti muri iki gihe.",
@@ -210,7 +230,30 @@
     "openPos": "Fungura POS",
     "loading": "Gukurura incamake…",
     "welcomeBack": "Murakaza neza",
-    "welcomeLead": "Imiterere y'uyu munsi, sitoki, n'uburyo bwihuse — byose mu maso."
+    "welcomeLead": "Imiterere y'uyu munsi, sitoki, n'uburyo bwihuse — byose mu maso.",
+    "treasuryTitle": "Cash n'ubwishyuza",
+    "treasurySubtitle": "Amafaranga mu kabati, uyu munsi, na banki",
+    "cashInBtn": "Cash winjiye",
+    "bankDepositBtn": "Kubitsa banki",
+    "estimatedDrawer": "Cash mu kabati (approx)",
+    "drawerFormula": "Kugurisha muri cash + cash wanditse winjiye − amafaranga wohereje muri banki.",
+    "todayByPayment": "Uyu munsi ku buryo",
+    "payCash": "Cash",
+    "payMomoCode": "MoMo code",
+    "payMomoPhone": "MoMo telefoni",
+    "allTimeMomo": "MoMo yose (code + telefoni)",
+    "bankDepositsAllTime": "Kubitsa banki byanditswe",
+    "treasuryRecorded": "Byabitswe",
+    "modalCashInTitle": "Andika cash winjiye",
+    "modalBankTitle": "Andika kubitsa banki",
+    "modalHint": "Urengera ufungura cash cyangwa wohereza muri banki.",
+    "modalAmount": "Umubare",
+    "modalNote": "Ibisobanuro (bishoboka)",
+    "modalCancel": "Hagarika",
+    "modalSave": "Bika",
+    "modalInvalidAmount": "Injiza umubare mwiza.",
+    "recentColSale": "Kugurisha",
+    "recentColPay": "Kwishyura"
   },
   "pos": {
     "title": "Kugurisha",
@@ -240,7 +283,17 @@
     "noProductsBody": "Ongeraho ibicuruzwa kugira ngo biboneke hano.",
     "totalMobile": "Amafaranga",
     "loadingCatalog": "Gukurura urutonde…",
-    "noProductsTitle": "Nta bicuruzwa"
+    "noProductsTitle": "Nta bicuruzwa",
+    "paymentMethod": "Uburyo bwishyuza",
+    "payCash": "Cash",
+    "payMomoCode": "MoMo code",
+    "payMomoPhone": "MoMo telefoni",
+    "saleDone": "Kugurisha #{{id}} — {{amount}}",
+    "payMethodShort": {
+      "CASH": "Cash",
+      "MOMO_CODE": "MoMo code",
+      "MOMO_PHONE": "MoMo tel."
+    }
   },
   "owner": {
     "title": "Konti y'nyir'urubuga",

@@ -129,6 +129,25 @@
     "invalidRange": "Start date must be on or before end date.",
     "loadError": "Could not load report. Try again.",
     "generatedOn": "Generated on {{date}}",
+    "paymentsTreasuryTitle": "Payments & treasury",
+    "periodPayments": "Sales by payment (period)",
+    "treasuryMovements": "Treasury (period)",
+    "estimatedDrawer": "Estimated cash drawer",
+    "estimatedDrawerHint": "All-time: cash sales + cash in − bank deposits. Does not include mobile-money float.",
+    "pay": {
+      "cash": "Cash",
+      "momoCode": "MoMo code",
+      "momoPhone": "MoMo phone"
+    },
+    "treasury": {
+      "cashIn": "Cash in (float)",
+      "bankDeposit": "Bank deposits"
+    },
+    "payMethodLabel": {
+      "CASH": "Cash",
+      "MOMO_CODE": "MoMo code",
+      "MOMO_PHONE": "MoMo phone"
+    },
     "kpi": {
       "sales": "Total sales",
       "saleCount": "{{count}} transactions",
@@ -156,7 +175,8 @@
       "barcode": "Barcode",
       "time": "Time",
       "cashier": "Cashier",
-      "total": "Total"
+      "total": "Total",
+      "payment": "Payment"
     },
     "empty": {
       "medicines": "No medicine lines in this period.",
@@ -210,7 +230,30 @@
     "openPos": "Open POS",
     "loading": "Loading your dashboard…",
     "welcomeBack": "Welcome back",
-    "welcomeLead": "Today's performance, stock signals, and shortcuts—everything you need to run the floor in one glance."
+    "welcomeLead": "Today's performance, stock signals, and shortcuts—everything you need to run the floor in one glance.",
+    "treasuryTitle": "Cash & payments",
+    "treasurySubtitle": "Drawer estimate, today’s split, and bank movements",
+    "cashInBtn": "Cash in",
+    "bankDepositBtn": "Bank deposit",
+    "estimatedDrawer": "Estimated cash in drawer",
+    "drawerFormula": "All-time cash sales + cash you add in − amounts deposited to the bank (approximate).",
+    "todayByPayment": "Today’s sales by payment",
+    "payCash": "Cash",
+    "payMomoCode": "MoMo code",
+    "payMomoPhone": "MoMo phone",
+    "allTimeMomo": "All-time mobile money (code + phone)",
+    "bankDepositsAllTime": "Bank deposits recorded",
+    "treasuryRecorded": "Movement saved",
+    "modalCashInTitle": "Record cash in",
+    "modalBankTitle": "Record bank deposit",
+    "modalHint": "Use this when you add float to the drawer or move cash from the business to your bank.",
+    "modalAmount": "Amount",
+    "modalNote": "Note (optional)",
+    "modalCancel": "Cancel",
+    "modalSave": "Save",
+    "modalInvalidAmount": "Enter a valid amount greater than zero.",
+    "recentColSale": "Sale",
+    "recentColPay": "Pay"
   },
   "pos": {
     "title": "Point of sale",
@@ -240,7 +283,17 @@
     "noProductsBody": "Add products under Products so they appear here for checkout.",
     "totalMobile": "Total",
     "loadingCatalog": "Loading catalog…",
-    "noProductsTitle": "No products yet"
+    "noProductsTitle": "No products yet",
+    "paymentMethod": "Payment method",
+    "payCash": "Cash",
+    "payMomoCode": "MoMo code",
+    "payMomoPhone": "MoMo phone",
+    "saleDone": "Sale #{{id}} — {{amount}}",
+    "payMethodShort": {
+      "CASH": "Cash",
+      "MOMO_CODE": "MoMo code",
+      "MOMO_PHONE": "MoMo phone"
+    }
   },
   "owner": {
     "title": "Owner console",

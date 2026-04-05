@@ -12,9 +12,11 @@ import com.pharmacy.dto.SaleResponse;
 import com.pharmacy.dto.SalesSummaryResponse;
 import com.pharmacy.entity.Batch;
 import com.pharmacy.entity.Expense;
+import com.pharmacy.entity.PaymentMethod;
 import com.pharmacy.entity.Pharmacy;
 import com.pharmacy.entity.StockMovementType;
 import com.pharmacy.entity.StockReference;
+import com.pharmacy.entity.TreasuryMovementType;
 import com.pharmacy.exception.BusinessRuleException;
 import com.pharmacy.exception.ResourceNotFoundException;
 import com.pharmacy.repository.BatchRepository;
@@ -23,6 +25,7 @@ import com.pharmacy.repository.PharmacyRepository;
 import com.pharmacy.repository.SaleItemRepository;
 import com.pharmacy.repository.SaleRepository;
 import com.pharmacy.repository.StockMovementRepository;
+import com.pharmacy.repository.TreasuryMovementRepository;
 import com.pharmacy.security.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -46,6 +49,7 @@ public class ReportService {
     private final ExpenseRepository expenseRepository;
     private final PharmacyRepository pharmacyRepository;
     private final BatchRepository batchRepository;
+    private final TreasuryMovementRepository treasuryMovementRepository;
     private final InventoryProperties inventoryProperties;
 
     private Long pid() {
@@ -133,12 +137,35 @@ public class ReportService {
         List<LowStockProductResponse> low = lowStock(lowStockThreshold);
         BigDecimal net = salesBlock.getTotalAmount().subtract(totalExpenses);
 
+        BigDecimal salesCash = nz(saleRepository.sumTotalByPaymentMethodBetween(pid(), PaymentMethod.CASH, from, to));
+        BigDecimal salesMomoCode =
+                nz(saleRepository.sumTotalByPaymentMethodBetween(pid(), PaymentMethod.MOMO_CODE, from, to));
+        BigDecimal salesMomoPhone =
+                nz(saleRepository.sumTotalByPaymentMethodBetween(pid(), PaymentMethod.MOMO_PHONE, from, to));
+
+        BigDecimal treasuryCashIn =
+                nz(treasuryMovementRepository.sumAmountByTypeBetween(pid(), TreasuryMovementType.CASH_IN, from, to));
+        BigDecimal treasuryBankDeposits = nz(
+                treasuryMovementRepository.sumAmountByTypeBetween(pid(), TreasuryMovementType.BANK_DEPOSIT, from, to));
+
+        BigDecimal allCashSales = nz(saleRepository.sumTotalByPaymentMethodAllTime(pid(), PaymentMethod.CASH));
+        BigDecimal allCashIn = nz(treasuryMovementRepository.sumAmountByTypeAllTime(pid(), TreasuryMovementType.CASH_IN));
+        BigDecimal allBankOut =
+                nz(treasuryMovementRepository.sumAmountByTypeAllTime(pid(), TreasuryMovementType.BANK_DEPOSIT));
+        BigDecimal estimatedDrawer = allCashSales.add(allCashIn).subtract(allBankOut);
+
         return FinancialReportResponse.builder()
                 .pharmacy(header)
                 .periodFrom(from)
                 .periodTo(to)
                 .totalSales(salesBlock.getTotalAmount())
                 .saleCount(salesBlock.getSaleCount())
+                .salesCash(salesCash)
+                .salesMomoCode(salesMomoCode)
+                .salesMomoPhone(salesMomoPhone)
+                .treasuryCashIn(treasuryCashIn)
+                .treasuryBankDeposits(treasuryBankDeposits)
+                .estimatedCashDrawer(estimatedDrawer)
                 .totalExpenses(totalExpenses)
                 .netAmount(net)
                 .inventoryUnitsAdded(invUnits)
@@ -148,6 +175,10 @@ public class ReportService {
                 .lowStock(low)
                 .sales(salesBlock.getSales())
                 .build();
+    }
+
+    private static BigDecimal nz(BigDecimal v) {
+        return v == null ? BigDecimal.ZERO : v;
     }
 
     private MedicineSoldRowResponse mapMedicineRow(Object[] row) {
@@ -195,6 +226,7 @@ public class ReportService {
         return SaleResponse.builder()
                 .id(s.getId())
                 .totalAmount(s.getTotalAmount())
+                .paymentMethod(s.getPaymentMethod())
                 .createdAt(s.getCreatedAt())
                 .cashierUsername(s.getUser().getUsername())
                 .items(List.of())

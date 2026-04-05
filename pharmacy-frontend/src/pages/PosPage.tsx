@@ -22,7 +22,7 @@ import {
 } from "@/store/cartStore";
 import { playScanBeep, playSaleCompleteBeep } from "@/utils/beep";
 import { formatMoney } from "@/utils/money";
-import type { ProductResponse } from "@/api/types";
+import type { PaymentMethod, ProductResponse } from "@/api/types";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Table, Th, Td } from "@/components/ui/Table";
@@ -47,6 +47,50 @@ function formatProductDate(iso: string) {
   }
 }
 
+function PosPaymentPicker(props: {
+  value: PaymentMethod;
+  onChange: (p: PaymentMethod) => void;
+  compact?: boolean;
+}) {
+  const { t } = useTranslation();
+  const { value, onChange, compact } = props;
+  const opts: { id: PaymentMethod; label: string }[] = [
+    { id: "CASH", label: t("pos.payCash") },
+    { id: "MOMO_CODE", label: t("pos.payMomoCode") },
+    { id: "MOMO_PHONE", label: t("pos.payMomoPhone") },
+  ];
+  return (
+    <div className={cn("space-y-2", compact && "space-y-1.5")}>
+      <p
+        className={cn(
+          "font-bold uppercase tracking-widest text-ink-muted",
+          compact ? "text-[9px]" : "text-[10px]"
+        )}
+      >
+        {t("pos.paymentMethod")}
+      </p>
+      <div className="grid grid-cols-3 gap-1.5">
+        {opts.map((o) => (
+          <button
+            key={o.id}
+            type="button"
+            onClick={() => onChange(o.id)}
+            className={cn(
+              "rounded-xl border text-center font-semibold leading-tight transition",
+              compact ? "px-1 py-2 text-[10px]" : "px-2 py-2.5 text-[11px] sm:text-xs",
+              value === o.id
+                ? "border-primary bg-primary text-primary-foreground shadow-md"
+                : "border-ink/10 bg-surface text-ink-muted hover:border-primary/35 hover:text-ink"
+            )}
+          >
+            {o.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function PosPage() {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
@@ -57,6 +101,7 @@ export function PosPage() {
   const [code, setCode] = useState("");
   const [cameraOpen, setCameraOpen] = useState(false);
   const [productFilter, setProductFilter] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("CASH");
   const lines = useCartStore((s) => s.lines);
   const replaceFromServer = useCartStore((s) => s.replaceFromServer);
   const lastAdded = useCartStore((s) => s.lastAddedUid);
@@ -180,12 +225,18 @@ export function PosPage() {
           productId: l.productId,
           quantity: l.quantity,
         })),
+        paymentMethod,
       }),
     onSuccess: (sale) => {
       playSaleCompleteBeep();
-      toast.success(`Sale #${sale.id} — ${formatMoney(sale.totalAmount)}`);
+      toast.success(
+        `${t("pos.saleDone", { id: sale.id, amount: formatMoney(sale.totalAmount) })} · ${t(`pos.payMethodShort.${sale.paymentMethod ?? "CASH"}`)}`
+      );
       clear();
+      setPaymentMethod("CASH");
       focusScan();
+      queryClient.invalidateQueries({ queryKey: tenantKey(pharmacyId, "treasury") });
+      queryClient.invalidateQueries({ queryKey: tenantKey(pharmacyId, "reports") });
     },
     onError: (e) => toast.error(getApiErrorMessage(e, "Checkout failed")),
   });
@@ -387,6 +438,7 @@ export function PosPage() {
                   <p className="mt-1 text-[11px] text-ink-muted">{t("pos.fifoNote")}</p>
                 </div>
               </div>
+              <PosPaymentPicker value={paymentMethod} onChange={setPaymentMethod} />
               <Button
                 className="mt-4 h-12 w-full gap-2 rounded-xl text-base font-semibold shadow-lg shadow-primary/20"
                 disabled={!lines.length}
@@ -484,25 +536,28 @@ export function PosPage() {
 
       {/* Sticky checkout bar when cart is stacked (below xl) */}
       {lines.length > 0 ? (
-        <div className="fixed inset-x-0 bottom-0 z-30 border-t border-ink/10 bg-surface/95 p-3 shadow-[0_-8px_30px_-12px_rgb(30_58_95/0.2)] backdrop-blur-md xl:hidden">
-          <div className="mx-auto flex max-w-lg items-center gap-3">
-            <div className="min-w-0 flex-1">
-              <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
-                {t("pos.totalMobile")}
-              </p>
-              <p className="truncate text-lg font-semibold tabular-nums text-primary">
-                {formatMoney(total)}
-              </p>
+        <div className="fixed inset-x-0 bottom-0 z-30 border-t border-ink/10 bg-surface/95 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-[0_-8px_30px_-12px_rgb(30_58_95/0.2)] backdrop-blur-md xl:hidden">
+          <div className="mx-auto max-w-lg space-y-3">
+            <PosPaymentPicker value={paymentMethod} onChange={setPaymentMethod} compact />
+            <div className="flex items-center gap-3">
+              <div className="min-w-0 flex-1">
+                <p className="text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
+                  {t("pos.totalMobile")}
+                </p>
+                <p className="truncate text-lg font-semibold tabular-nums text-primary">
+                  {formatMoney(total)}
+                </p>
+              </div>
+              <Button
+                className="h-11 shrink-0 gap-2 px-5"
+                disabled={!lines.length}
+                loading={checkoutMut.isPending}
+                onClick={() => checkoutMut.mutate()}
+              >
+                <CreditCard className="size-4" />
+                {t("pos.pay")}
+              </Button>
             </div>
-            <Button
-              className="h-11 shrink-0 gap-2 px-5"
-              disabled={!lines.length}
-              loading={checkoutMut.isPending}
-              onClick={() => checkoutMut.mutate()}
-            >
-              <CreditCard className="size-4" />
-              {t("pos.pay")}
-            </Button>
           </div>
         </div>
       ) : null}

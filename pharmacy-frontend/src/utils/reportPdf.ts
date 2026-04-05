@@ -80,6 +80,67 @@ export function downloadFinancialReportPdf(
   doc.setFont("helvetica", "bold");
   doc.setFontSize(11);
   doc.setTextColor(35, 35, 35);
+  doc.text("Payments received (selected period)", 14, y);
+  y += 4;
+  autoTable(doc, {
+    startY: y,
+    head: [["Cash", "MoMo code", "MoMo phone"]],
+    body: [
+      [
+        pdfMoney(r.salesCash, r.pharmacy.currencyCode),
+        pdfMoney(r.salesMomoCode, r.pharmacy.currencyCode),
+        pdfMoney(r.salesMomoPhone, r.pharmacy.currencyCode),
+      ],
+    ],
+    theme: "striped",
+    headStyles: { fillColor: ACCENT, fontSize: 9 },
+    styles: { fontSize: 9 },
+    margin: { left: 14, right: 14 },
+  });
+  y = lastTableBottom(doc) + 8;
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(11);
+  doc.text("Treasury (selected period)", 14, y);
+  y += 4;
+  autoTable(doc, {
+    startY: y,
+    head: [["Cash in (float)", "Bank deposits"]],
+    body: [
+      [
+        pdfMoney(r.treasuryCashIn, r.pharmacy.currencyCode),
+        pdfMoney(r.treasuryBankDeposits, r.pharmacy.currencyCode),
+      ],
+    ],
+    theme: "striped",
+    headStyles: { fillColor: ACCENT, fontSize: 9 },
+    styles: { fontSize: 9 },
+    margin: { left: 14, right: 14 },
+  });
+  y = lastTableBottom(doc) + 8;
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(11);
+  doc.text("Estimated cash in drawer (all-time)", 14, y);
+  y += 4;
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(10);
+  doc.setTextColor(55, 55, 55);
+  doc.text(
+    "Cash sales + recorded cash in − bank deposits (approximate physical cash).",
+    14,
+    y
+  );
+  y += 6;
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(12);
+  doc.setTextColor(35, 35, 35);
+  doc.text(pdfMoney(r.estimatedCashDrawer, r.pharmacy.currencyCode), 14, y);
+  y += 12;
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(11);
+  doc.setTextColor(35, 35, 35);
   doc.text("Medicines sold (summary by product)", 14, y);
   y += 4;
   autoTable(doc, {
@@ -165,16 +226,17 @@ export function downloadFinancialReportPdf(
   y += 4;
   autoTable(doc, {
     startY: y,
-    head: [["ID", "Time", "Cashier", "Total"]],
+    head: [["ID", "Payment", "Time", "Cashier", "Total"]],
     body:
       r.sales.length > 0
         ? r.sales.map((s) => [
             String(s.id),
+            s.paymentMethod ?? "CASH",
             new Date(s.createdAt).toLocaleString(),
             s.cashierUsername,
             pdfMoney(s.totalAmount, r.pharmacy.currencyCode),
           ])
-        : [["—", "—", "—", "—"]],
+        : [["—", "—", "—", "—", "—"]],
     theme: "striped",
     headStyles: { fillColor: ACCENT, fontSize: 9 },
     styles: { fontSize: 8 },

@@ -15,6 +15,13 @@ public class FinancialReportResponse {
     Instant periodTo;
     BigDecimal totalSales;
     long saleCount;
+    BigDecimal salesCash;
+    BigDecimal salesMomoCode;
+    BigDecimal salesMomoPhone;
+    BigDecimal treasuryCashIn;
+    BigDecimal treasuryBankDeposits;
+    /** All-time: cash sales + recorded cash in − bank deposits (physical drawer estimate). */
+    BigDecimal estimatedCashDrawer;
     BigDecimal totalExpenses;
     BigDecimal netAmount;
     long inventoryUnitsAdded;

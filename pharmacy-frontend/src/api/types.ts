@@ -132,6 +132,10 @@ export interface ProductInventorySummary {
   nearestExpiry: string | null;
 }
 
+export type PaymentMethod = "CASH" | "MOMO_CODE" | "MOMO_PHONE";
+
+export type TreasuryMovementType = "CASH_IN" | "BANK_DEPOSIT";
+
 export interface SaleLineRequest {
   productId?: number;
   barcode?: string;
@@ -140,6 +144,7 @@ export interface SaleLineRequest {
 
 export interface SaleRequest {
   items: SaleLineRequest[];
+  paymentMethod?: PaymentMethod;
 }
 
 /** Shared POS cart for the pharmacy (multi-device live sync). */
@@ -168,6 +173,8 @@ export interface SaleItemResponse {
 export interface SaleResponse {
   id: number;
   totalAmount: number;
+  /** Present on API ≥ payment tracking; UI defaults to CASH when missing. */
+  paymentMethod?: PaymentMethod;
   createdAt: string;
   cashierUsername: string;
   items: SaleItemResponse[];
@@ -230,6 +237,13 @@ export interface FinancialReportResponse {
   periodTo: string;
   totalSales: number;
   saleCount: number;
+  salesCash: number;
+  salesMomoCode: number;
+  salesMomoPhone: number;
+  treasuryCashIn: number;
+  treasuryBankDeposits: number;
+  /** All-time physical cash drawer estimate */
+  estimatedCashDrawer: number;
   totalExpenses: number;
   netAmount: number;
   inventoryUnitsAdded: number;
@@ -238,6 +252,33 @@ export interface FinancialReportResponse {
   inventoryAdded: InventoryAddedRow[];
   lowStock: LowStockProductResponse[];
   sales: SaleResponse[];
+}
+
+export interface TreasurySummaryResponse {
+  estimatedCashDrawer: number;
+  allTimeCashSales: number;
+  allTimeMomoCodeSales: number;
+  allTimeMomoPhoneSales: number;
+  allTimeCashIn: number;
+  allTimeBankDeposits: number;
+  todayCashSales: number;
+  todayMomoCodeSales: number;
+  todayMomoPhoneSales: number;
+}
+
+export interface TreasuryMovementRequest {
+  type: TreasuryMovementType;
+  amount: number;
+  note?: string;
+}
+
+export interface TreasuryMovementResponse {
+  id: number;
+  type: TreasuryMovementType;
+  amount: number;
+  note?: string | null;
+  createdAt: string;
+  recordedByUsername?: string | null;
 }
 
 export interface LowStockProductResponse {

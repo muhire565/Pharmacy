@@ -1,5 +1,6 @@
 package com.pharmacy.repository;
 
+import com.pharmacy.entity.PaymentMethod;
 import com.pharmacy.entity.Sale;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -28,6 +29,25 @@ public interface SaleRepository extends JpaRepository<Sale, Long> {
             """)
     List<Sale> findByPharmacyAndCreatedAtBetween(
             @Param("pharmacyId") Long pharmacyId,
+            @Param("from") Instant from,
+            @Param("to") Instant to);
+
+    @Query("""
+            SELECT COALESCE(SUM(s.totalAmount), 0) FROM Sale s
+            WHERE s.pharmacy.id = :pharmacyId AND s.paymentMethod = :method
+            """)
+    BigDecimal sumTotalByPaymentMethodAllTime(
+            @Param("pharmacyId") Long pharmacyId,
+            @Param("method") PaymentMethod method);
+
+    @Query("""
+            SELECT COALESCE(SUM(s.totalAmount), 0) FROM Sale s
+            WHERE s.pharmacy.id = :pharmacyId AND s.paymentMethod = :method
+              AND s.createdAt >= :from AND s.createdAt < :to
+            """)
+    BigDecimal sumTotalByPaymentMethodBetween(
+            @Param("pharmacyId") Long pharmacyId,
+            @Param("method") PaymentMethod method,
             @Param("from") Instant from,
             @Param("to") Instant to);
 }

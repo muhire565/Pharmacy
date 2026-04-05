@@ -191,6 +191,67 @@ export function ReportsPage() {
             />
           </div>
 
+          <Card className="border-primary/12 bg-gradient-to-br from-primary/[0.04] to-surface">
+            <CardHeader title={t("reports.paymentsTreasuryTitle")} />
+            <div className="grid gap-4 p-4 pt-0 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="rounded-xl border border-ink/8 bg-surface/80 p-4 shadow-sm">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-ink-muted">
+                  {t("reports.periodPayments")}
+                </p>
+                <ul className="mt-3 space-y-2 text-sm">
+                  <li className="flex justify-between gap-2">
+                    <span className="text-ink-muted">{t("reports.pay.cash")}</span>
+                    <span className="font-semibold tabular-nums text-ink">
+                      {formatMoney(r.salesCash)}
+                    </span>
+                  </li>
+                  <li className="flex justify-between gap-2">
+                    <span className="text-ink-muted">{t("reports.pay.momoCode")}</span>
+                    <span className="font-semibold tabular-nums text-ink">
+                      {formatMoney(r.salesMomoCode)}
+                    </span>
+                  </li>
+                  <li className="flex justify-between gap-2">
+                    <span className="text-ink-muted">{t("reports.pay.momoPhone")}</span>
+                    <span className="font-semibold tabular-nums text-ink">
+                      {formatMoney(r.salesMomoPhone)}
+                    </span>
+                  </li>
+                </ul>
+              </div>
+              <div className="rounded-xl border border-ink/8 bg-surface/80 p-4 shadow-sm">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-ink-muted">
+                  {t("reports.treasuryMovements")}
+                </p>
+                <ul className="mt-3 space-y-2 text-sm">
+                  <li className="flex justify-between gap-2">
+                    <span className="text-ink-muted">{t("reports.treasury.cashIn")}</span>
+                    <span className="font-semibold tabular-nums text-primary">
+                      {formatMoney(r.treasuryCashIn)}
+                    </span>
+                  </li>
+                  <li className="flex justify-between gap-2">
+                    <span className="text-ink-muted">{t("reports.treasury.bankDeposit")}</span>
+                    <span className="font-semibold tabular-nums text-amber-700 dark:text-amber-400">
+                      {formatMoney(r.treasuryBankDeposits)}
+                    </span>
+                  </li>
+                </ul>
+              </div>
+              <div className="rounded-xl border border-primary/20 bg-primary/[0.07] p-4 shadow-sm sm:col-span-2 lg:col-span-1">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-primary">
+                  {t("reports.estimatedDrawer")}
+                </p>
+                <p className="mt-2 text-2xl font-bold tabular-nums text-ink">
+                  {formatMoney(r.estimatedCashDrawer)}
+                </p>
+                <p className="mt-2 text-xs leading-relaxed text-ink-muted">
+                  {t("reports.estimatedDrawerHint")}
+                </p>
+              </div>
+            </div>
+          </Card>
+
           <div className="grid gap-6 lg:grid-cols-2">
             <Card>
               <CardHeader title={t("reports.chartTitle")} />
@@ -362,6 +423,7 @@ export function ReportsPage() {
               <thead>
                 <tr>
                   <Th>ID</Th>
+                  <Th>{t("reports.col.payment")}</Th>
                   <Th>{t("reports.col.time")}</Th>
                   <Th>{t("reports.col.cashier")}</Th>
                   <Th className="text-right">{t("reports.col.total")}</Th>
@@ -371,6 +433,11 @@ export function ReportsPage() {
                 {r.sales.map((s) => (
                   <tr key={s.id}>
                     <Td className="font-mono text-sm">{s.id}</Td>
+                    <Td>
+                      <span className="inline-flex rounded-lg bg-muted/80 px-2 py-0.5 text-xs font-semibold text-ink">
+                        {t(`reports.payMethodLabel.${s.paymentMethod ?? "CASH"}`)}
+                      </span>
+                    </Td>
                     <Td className="text-sm">{new Date(s.createdAt).toLocaleString()}</Td>
                     <Td>{s.cashierUsername}</Td>
                     <Td className="text-right font-medium tabular-nums">

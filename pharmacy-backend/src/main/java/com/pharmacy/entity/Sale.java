@@ -34,6 +34,11 @@ public class Sale {
     @Column(name = "total_amount", nullable = false, precision = 14, scale = 2)
     private BigDecimal totalAmount;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "payment_method", nullable = false, length = 32)
+    @Builder.Default
+    private PaymentMethod paymentMethod = PaymentMethod.CASH;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 

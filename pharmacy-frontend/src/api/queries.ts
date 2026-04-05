@@ -23,6 +23,9 @@ import type {
   FinancialReportResponse,
   ExpenseRecord,
   ExpenseRequest,
+  TreasurySummaryResponse,
+  TreasuryMovementRequest,
+  TreasuryMovementResponse,
   StockMovementResponse,
   SupplierRequest,
   SupplierResponse,
@@ -192,6 +195,18 @@ export const expensesApi = {
       })
       .then((r) => r.data),
   remove: (id: number) => api.delete(`/expenses/${id}`),
+};
+
+export const treasuryApi = {
+  summary: () => api.get<TreasurySummaryResponse>("/treasury/summary").then((r) => r.data),
+  movements: (from?: string, to?: string) =>
+    api
+      .get<TreasuryMovementResponse[]>("/treasury/movements", {
+        params: { ...(from ? { from } : {}), ...(to ? { to } : {}) },
+      })
+      .then((r) => r.data),
+  createMovement: (body: TreasuryMovementRequest) =>
+    api.post<TreasuryMovementResponse>("/treasury/movements", body).then((r) => r.data),
 };
 
 export const suppliersApi = {

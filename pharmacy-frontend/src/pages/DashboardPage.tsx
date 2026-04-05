@@ -1,6 +1,9 @@
 import type { ReactNode } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 import {
   ArrowRight,
   ArrowUpRight,
@@ -14,11 +17,18 @@ import {
   Boxes,
   Sparkles,
   Receipt,
+  Wallet,
+  Landmark,
+  Smartphone,
+  Plus,
 } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
 import { tenantKey } from "@/utils/tenantQuery";
-import { reportsApi } from "@/api/queries";
+import { reportsApi, treasuryApi } from "@/api/queries";
+import { getApiErrorMessage } from "@/api/client";
+import type { TreasuryMovementType } from "@/api/types";
 import { Card } from "@/components/ui/Card";
+import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Spinner } from "@/components/ui/Spinner";
@@ -27,8 +37,6 @@ import { Table, Td, Th } from "@/components/ui/Table";
 import { formatLongDateTime, getGreetingForTime } from "@/utils/greeting";
 import { useNow } from "@/hooks/useNow";
 import { cn } from "@/utils/cn";
-import { useTranslation } from "react-i18next";
-
 function StatTile(props: {
   label: string;
   value: ReactNode;
@@ -101,15 +109,25 @@ function QuickAction(props: {
 
 export function DashboardPage() {
   const { t } = useTranslation();
+  const queryClient = useQueryClient();
   const admin = useAuthStore((s) => s.role) === "PHARMACY_ADMIN";
   const pharmacyId = useAuthStore((s) => s.pharmacyId);
   const pharmacyName = useAuthStore((s) => s.pharmacyName);
   const now = useNow(1000);
   const date = todayLocal();
+  const [treasuryModal, setTreasuryModal] = useState<null | TreasuryMovementType>(null);
+  const [treasuryAmount, setTreasuryAmount] = useState("");
+  const [treasuryNote, setTreasuryNote] = useState("");
 
   const daily = useQuery({
     queryKey: tenantKey(pharmacyId, "reports", "daily", date),
     queryFn: () => reportsApi.dailySales(date),
+    enabled: admin && pharmacyId != null,
+  });
+
+  const treasury = useQuery({
+    queryKey: tenantKey(pharmacyId, "treasury", "summary"),
+    queryFn: treasuryApi.summary,
     enabled: admin && pharmacyId != null,
   });
 
@@ -123,6 +141,19 @@ export function DashboardPage() {
     queryKey: tenantKey(pharmacyId, "reports", "expiring"),
     queryFn: () => reportsApi.expiringSoon(),
     enabled: admin && pharmacyId != null,
+  });
+
+  const treasuryMut = useMutation({
+    mutationFn: treasuryApi.createMovement,
+    onSuccess: () => {
+      toast.success(t("dashboard.treasuryRecorded"));
+      setTreasuryModal(null);
+      setTreasuryAmount("");
+      setTreasuryNote("");
+      queryClient.invalidateQueries({ queryKey: tenantKey(pharmacyId, "treasury") });
+      queryClient.invalidateQueries({ queryKey: tenantKey(pharmacyId, "reports") });
+    },
+    onError: (e) => toast.error(getApiErrorMessage(e)),
   });
 
   if (!admin) {
@@ -150,7 +181,7 @@ export function DashboardPage() {
     );
   }
 
-  if (daily.isLoading || low.isLoading || exp.isLoading) {
+  if (daily.isLoading || treasury.isLoading || low.isLoading || exp.isLoading) {
     return (
       <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4">
         <Spinner />
@@ -205,6 +236,106 @@ export function DashboardPage() {
                   Inventory
                 </Button>
               </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Cash & payments */}
+      <section className="overflow-hidden rounded-3xl border border-primary/12 bg-gradient-to-br from-primary/[0.06] via-surface to-surface shadow-card">
+        <div className="border-b border-ink/8 bg-surface/60 px-5 py-4 sm:px-6">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-primary/15 text-primary ring-1 ring-primary/20">
+                <Wallet className="size-5" strokeWidth={2} />
+              </div>
+              <div>
+                <h2 className="text-base font-semibold text-ink">{t("dashboard.treasuryTitle")}</h2>
+                <p className="text-xs text-ink-muted">{t("dashboard.treasurySubtitle")}</p>
+              </div>
+            </div>
+            <div className="flex flex-col gap-2 sm:flex-row sm:shrink-0">
+              <Button
+                type="button"
+                variant="secondary"
+                className="h-10 gap-2 border-primary/20 bg-surface text-ink shadow-sm"
+                onClick={() => {
+                  setTreasuryModal("CASH_IN");
+                  setTreasuryAmount("");
+                  setTreasuryNote("");
+                }}
+              >
+                <Plus className="size-4" strokeWidth={2} />
+                {t("dashboard.cashInBtn")}
+              </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                className="h-10 gap-2 border-ink/12 bg-surface shadow-sm"
+                onClick={() => {
+                  setTreasuryModal("BANK_DEPOSIT");
+                  setTreasuryAmount("");
+                  setTreasuryNote("");
+                }}
+              >
+                <Landmark className="size-4" strokeWidth={2} />
+                {t("dashboard.bankDepositBtn")}
+              </Button>
+            </div>
+          </div>
+        </div>
+        <div className="grid gap-4 p-4 sm:p-5 lg:grid-cols-12">
+          <div className="rounded-2xl border border-ink/8 bg-surface p-5 shadow-sm lg:col-span-5">
+            <p className="text-[11px] font-bold uppercase tracking-widest text-ink-muted">
+              {t("dashboard.estimatedDrawer")}
+            </p>
+            <p className="mt-2 text-3xl font-bold tabular-nums tracking-tight text-primary sm:text-4xl">
+              {formatMoney(treasury.data?.estimatedCashDrawer ?? 0)}
+            </p>
+            <p className="mt-2 text-xs leading-relaxed text-ink-muted">{t("dashboard.drawerFormula")}</p>
+          </div>
+          <div className="rounded-2xl border border-ink/8 bg-surface p-5 shadow-sm lg:col-span-7">
+            <p className="text-[11px] font-bold uppercase tracking-widest text-ink-muted">
+              {t("dashboard.todayByPayment")}
+            </p>
+            <div className="mt-4 grid gap-3 sm:grid-cols-3">
+              <div className="rounded-xl bg-muted/40 px-3 py-3 ring-1 ring-ink/6">
+                <p className="text-[10px] font-semibold uppercase text-ink-muted">{t("dashboard.payCash")}</p>
+                <p className="mt-1 text-lg font-bold tabular-nums text-ink">
+                  {formatMoney(treasury.data?.todayCashSales ?? 0)}
+                </p>
+              </div>
+              <div className="rounded-xl bg-muted/40 px-3 py-3 ring-1 ring-ink/6">
+                <p className="text-[10px] font-semibold uppercase text-ink-muted">
+                  {t("dashboard.payMomoCode")}
+                </p>
+                <p className="mt-1 text-lg font-bold tabular-nums text-ink">
+                  {formatMoney(treasury.data?.todayMomoCodeSales ?? 0)}
+                </p>
+              </div>
+              <div className="rounded-xl bg-muted/40 px-3 py-3 ring-1 ring-ink/6">
+                <p className="text-[10px] font-semibold uppercase text-ink-muted">
+                  {t("dashboard.payMomoPhone")}
+                </p>
+                <p className="mt-1 text-lg font-bold tabular-nums text-ink">
+                  {formatMoney(treasury.data?.todayMomoPhoneSales ?? 0)}
+                </p>
+              </div>
+            </div>
+            <div className="mt-4 grid gap-2 border-t border-ink/8 pt-4 text-xs text-ink-muted sm:grid-cols-2">
+              <p>
+                <span className="font-medium text-ink">{t("dashboard.allTimeMomo")}:</span>{" "}
+                {formatMoney(
+                  (treasury.data?.allTimeMomoCodeSales ?? 0) + (treasury.data?.allTimeMomoPhoneSales ?? 0)
+                )}
+              </p>
+              <p className="flex items-center gap-1.5 sm:justify-end">
+                <Smartphone className="size-3.5 shrink-0 opacity-70" strokeWidth={2} />
+                {t("dashboard.bankDepositsAllTime")}:{" "}
+                <span className="font-semibold tabular-nums text-ink">
+                  {formatMoney(treasury.data?.allTimeBankDeposits ?? 0)}
+                </span>
+              </p>
             </div>
           </div>
         </div>
@@ -265,16 +396,22 @@ export function DashboardPage() {
                 >
                   <thead>
                     <tr>
-                      <Th>Sale</Th>
-                      <Th>Cashier</Th>
-                      <Th>Time</Th>
-                      <Th className="text-right">Amount</Th>
+                      <Th>{t("dashboard.recentColSale")}</Th>
+                      <Th>{t("dashboard.recentColPay")}</Th>
+                      <Th>{t("reports.col.cashier")}</Th>
+                      <Th>{t("reports.col.time")}</Th>
+                      <Th className="text-right">{t("reports.col.total")}</Th>
                     </tr>
                   </thead>
                   <tbody>
                     {latestSales.map((sale) => (
                       <tr key={sale.id}>
                         <Td className="font-medium">#{sale.id}</Td>
+                        <Td>
+                          <span className="inline-flex rounded-md bg-muted/90 px-2 py-0.5 text-[11px] font-semibold text-ink">
+                            {t(`reports.payMethodLabel.${sale.paymentMethod ?? "CASH"}`)}
+                          </span>
+                        </Td>
                         <Td className="text-ink-muted">{sale.cashierUsername}</Td>
                         <Td className="text-ink-muted">
                           {new Date(sale.createdAt).toLocaleTimeString([], {
@@ -411,6 +548,76 @@ export function DashboardPage() {
           </div>
         </Card>
       </section>
+
+      {treasuryModal ? (
+        <div
+          className="fixed inset-0 z-50 flex items-end justify-center bg-ink/45 p-4 pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur-[2px] sm:items-center"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="treasury-modal-title"
+          onClick={() => {
+            if (!treasuryMut.isPending) setTreasuryModal(null);
+          }}
+        >
+          <div
+            className="w-full max-w-md rounded-2xl border border-ink/10 bg-surface p-5 shadow-2xl sm:p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 id="treasury-modal-title" className="text-lg font-semibold text-ink">
+              {treasuryModal === "CASH_IN"
+                ? t("dashboard.modalCashInTitle")
+                : t("dashboard.modalBankTitle")}
+            </h3>
+            <p className="mt-1 text-sm text-ink-muted">{t("dashboard.modalHint")}</p>
+            <div className="mt-4 space-y-3">
+              <Input
+                type="number"
+                inputMode="decimal"
+                min={0.01}
+                step="any"
+                label={t("dashboard.modalAmount")}
+                value={treasuryAmount}
+                onChange={(e) => setTreasuryAmount(e.target.value)}
+              />
+              <Input
+                label={t("dashboard.modalNote")}
+                value={treasuryNote}
+                onChange={(e) => setTreasuryNote(e.target.value)}
+              />
+            </div>
+            <div className="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+              <Button
+                type="button"
+                variant="secondary"
+                className="w-full sm:w-auto"
+                disabled={treasuryMut.isPending}
+                onClick={() => setTreasuryModal(null)}
+              >
+                {t("dashboard.modalCancel")}
+              </Button>
+              <Button
+                type="button"
+                className="w-full sm:w-auto"
+                loading={treasuryMut.isPending}
+                onClick={() => {
+                  const n = Number(treasuryAmount);
+                  if (Number.isNaN(n) || n <= 0) {
+                    toast.error(t("dashboard.modalInvalidAmount"));
+                    return;
+                  }
+                  treasuryMut.mutate({
+                    type: treasuryModal,
+                    amount: n,
+                    note: treasuryNote.trim() || undefined,
+                  });
+                }}
+              >
+                {t("dashboard.modalSave")}
+              </Button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

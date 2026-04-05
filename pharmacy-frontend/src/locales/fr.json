@@ -129,6 +129,25 @@
     "invalidRange": "La date de début doit précéder ou égaler la date de fin.",
     "loadError": "Impossible de charger le rapport.",
     "generatedOn": "Généré le {{date}}",
+    "paymentsTreasuryTitle": "Paiements et trésorerie",
+    "periodPayments": "Ventes par mode (période)",
+    "treasuryMovements": "Trésorerie (période)",
+    "estimatedDrawer": "Caisse espèces estimée",
+    "estimatedDrawerHint": "Cumul : ventes espèces + entrées − dépôts banque. Hors solde mobile money.",
+    "pay": {
+      "cash": "Espèces",
+      "momoCode": "MoMo code",
+      "momoPhone": "MoMo téléphone"
+    },
+    "treasury": {
+      "cashIn": "Entrée d’espèces",
+      "bankDeposit": "Dépôts banque"
+    },
+    "payMethodLabel": {
+      "CASH": "Espèces",
+      "MOMO_CODE": "MoMo code",
+      "MOMO_PHONE": "MoMo téléphone"
+    },
     "kpi": {
       "sales": "Ventes totales",
       "saleCount": "{{count}} transactions",
@@ -156,7 +175,8 @@
       "barcode": "Code-barres",
       "time": "Heure",
       "cashier": "Caissier",
-      "total": "Total"
+      "total": "Total",
+      "payment": "Paiement"
     },
     "empty": {
       "medicines": "Aucune ligne produit sur cette période.",
@@ -210,7 +230,30 @@
     "openPos": "Ouvrir le PDV",
     "loading": "Chargement du tableau de bord…",
     "welcomeBack": "Bon retour",
-    "welcomeLead": "Performance du jour, alertes stocks et raccourcis — tout pour piloter l’officine."
+    "welcomeLead": "Performance du jour, alertes stocks et raccourcis — tout pour piloter l’officine.",
+    "treasuryTitle": "Espèces et paiements",
+    "treasurySubtitle": "Estimation de caisse, ventilation du jour et banque",
+    "cashInBtn": "Entrée d’espèces",
+    "bankDepositBtn": "Dépôt bancaire",
+    "estimatedDrawer": "Espèces estimées en caisse",
+    "drawerFormula": "Ventes espèces + entrées enregistrées − dépôts banque (approximatif).",
+    "todayByPayment": "Ventes du jour par mode",
+    "payCash": "Espèces",
+    "payMomoCode": "MoMo code",
+    "payMomoPhone": "MoMo téléphone",
+    "allTimeMomo": "Mobile money cumulé (code + téléphone)",
+    "bankDepositsAllTime": "Dépôts banque enregistrés",
+    "treasuryRecorded": "Mouvement enregistré",
+    "modalCashInTitle": "Enregistrer une entrée d’espèces",
+    "modalBankTitle": "Enregistrer un dépôt bancaire",
+    "modalHint": "Ajout de fonds en caisse ou transfert des espèces vers la banque.",
+    "modalAmount": "Montant",
+    "modalNote": "Note (optionnel)",
+    "modalCancel": "Annuler",
+    "modalSave": "Enregistrer",
+    "modalInvalidAmount": "Saisissez un montant valide supérieur à zéro.",
+    "recentColSale": "Vente",
+    "recentColPay": "Paiement"
   },
   "pos": {
     "title": "Point de vente",
@@ -240,7 +283,17 @@
     "noProductsBody": "Ajoutez des produits pour qu’ils apparaissent ici.",
     "totalMobile": "Total",
     "loadingCatalog": "Chargement du catalogue…",
-    "noProductsTitle": "Aucun produit"
+    "noProductsTitle": "Aucun produit",
+    "paymentMethod": "Mode de paiement",
+    "payCash": "Espèces",
+    "payMomoCode": "MoMo code",
+    "payMomoPhone": "MoMo téléphone",
+    "saleDone": "Vente #{{id}} — {{amount}}",
+    "payMethodShort": {
+      "CASH": "Espèces",
+      "MOMO_CODE": "MoMo code",
+      "MOMO_PHONE": "MoMo tél."
+    }
   },
   "owner": {
     "title": "Console propriétaire",

@@ -5,6 +5,7 @@ import com.pharmacy.dto.SaleLineRequest;
 import com.pharmacy.dto.SaleRequest;
 import com.pharmacy.dto.SaleResponse;
 import com.pharmacy.entity.Batch;
+import com.pharmacy.entity.PaymentMethod;
 import com.pharmacy.entity.Pharmacy;
 import com.pharmacy.entity.Product;
 import com.pharmacy.entity.Sale;
@@ -96,10 +97,15 @@ public class SaleService {
             }
         }
 
+        PaymentMethod paymentMethod = request.getPaymentMethod() != null
+                ? request.getPaymentMethod()
+                : PaymentMethod.CASH;
+
         Sale sale = Sale.builder()
                 .pharmacy(pharmacy)
                 .user(cashier)
                 .totalAmount(total)
+                .paymentMethod(paymentMethod)
                 .build();
         for (SaleItem si : pendingItems) {
             si.setSale(sale);
@@ -119,7 +125,7 @@ public class SaleService {
         }
 
         auditService.record("SALE_CREATE", "Sale", String.valueOf(sale.getId()),
-                cashier.getUsername(), "total=" + total);
+                cashier.getUsername(), "total=" + total + " method=" + paymentMethod);
         posDraftService.clear(pharmacyId());
         liveUpdatesService.saleCreated(pharmacyId(), sale.getId(), sale.getTotalAmount());
         sale.getItems().forEach(i -> liveUpdatesService.inventoryChanged(pharmacyId(), i.getProduct().getId()));
@@ -151,6 +157,7 @@ public class SaleService {
         return SaleResponse.builder()
                 .id(sale.getId())
                 .totalAmount(sale.getTotalAmount())
+                .paymentMethod(sale.getPaymentMethod())
                 .createdAt(sale.getCreatedAt())
                 .cashierUsername(sale.getUser().getUsername())
                 .items(lines)
