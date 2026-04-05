@@ -2,12 +2,27 @@ package com.pharmacy.service;
 
 import com.pharmacy.config.InventoryProperties;
 import com.pharmacy.dto.ExpiringBatchResponse;
+import com.pharmacy.dto.ExpenseResponse;
+import com.pharmacy.dto.FinancialReportResponse;
+import com.pharmacy.dto.InventoryAddedRowResponse;
 import com.pharmacy.dto.LowStockProductResponse;
+import com.pharmacy.dto.MedicineSoldRowResponse;
+import com.pharmacy.dto.ReportPharmacyHeaderResponse;
 import com.pharmacy.dto.SaleResponse;
 import com.pharmacy.dto.SalesSummaryResponse;
 import com.pharmacy.entity.Batch;
+import com.pharmacy.entity.Expense;
+import com.pharmacy.entity.Pharmacy;
+import com.pharmacy.entity.StockMovementType;
+import com.pharmacy.entity.StockReference;
+import com.pharmacy.exception.BusinessRuleException;
+import com.pharmacy.exception.ResourceNotFoundException;
 import com.pharmacy.repository.BatchRepository;
+import com.pharmacy.repository.ExpenseRepository;
+import com.pharmacy.repository.PharmacyRepository;
+import com.pharmacy.repository.SaleItemRepository;
 import com.pharmacy.repository.SaleRepository;
+import com.pharmacy.repository.StockMovementRepository;
 import com.pharmacy.security.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,6 +41,10 @@ import java.util.stream.Collectors;
 public class ReportService {
 
     private final SaleRepository saleRepository;
+    private final SaleItemRepository saleItemRepository;
+    private final StockMovementRepository stockMovementRepository;
+    private final ExpenseRepository expenseRepository;
+    private final PharmacyRepository pharmacyRepository;
     private final BatchRepository batchRepository;
     private final InventoryProperties inventoryProperties;
 
@@ -62,6 +81,114 @@ public class ReportService {
                 .saleCount(sales.size())
                 .sales(sales)
                 .build();
+    }
+
+    @Transactional(readOnly = true)
+    public FinancialReportResponse financialReport(
+            LocalDate fromDate, LocalDate toDate, ZoneId zone, int lowStockThreshold) {
+        if (fromDate.isAfter(toDate)) {
+            throw new BusinessRuleException("Start date must be on or before end date");
+        }
+        long days = ChronoUnit.DAYS.between(fromDate, toDate) + 1;
+        if (days > 1096) {
+            throw new BusinessRuleException("Report range cannot exceed 1096 days");
+        }
+        ZoneId z = zone != null ? zone : ZoneId.systemDefault();
+        Instant from = fromDate.atStartOfDay(z).toInstant();
+        Instant to = toDate.plusDays(1).atStartOfDay(z).toInstant();
+
+        Pharmacy p = pharmacyRepository.findById(pid())
+                .orElseThrow(() -> new ResourceNotFoundException("Pharmacy not found"));
+        ReportPharmacyHeaderResponse header = ReportPharmacyHeaderResponse.builder()
+                .name(p.getName())
+                .address(p.getAddress())
+                .phoneE164(p.getPhoneE164())
+                .email(p.getEmail())
+                .currencyCode(p.getCurrencyCode())
+                .build();
+
+        SalesSummaryResponse salesBlock = buildSummary(from, to);
+        BigDecimal totalExpenses = expenseRepository.sumAmountBetween(pid(), from, to);
+        if (totalExpenses == null) {
+            totalExpenses = BigDecimal.ZERO;
+        }
+
+        List<Expense> expenseEntities =
+                expenseRepository.findByPharmacyAndIncurredBetween(pid(), from, to);
+
+        List<MedicineSoldRowResponse> medicines = saleItemRepository
+                .aggregateSoldByProduct(pid(), from, to).stream()
+                .map(this::mapMedicineRow)
+                .collect(Collectors.toList());
+
+        Long unitsAdded = stockMovementRepository.sumRestockQuantityBetween(
+                pid(), StockMovementType.IN, StockReference.RESTOCK, from, to);
+        long invUnits = unitsAdded != null ? unitsAdded : 0L;
+
+        List<InventoryAddedRowResponse> invRows = stockMovementRepository
+                .aggregateRestockByProduct(pid(), StockMovementType.IN, StockReference.RESTOCK, from, to).stream()
+                .map(this::mapInventoryRow)
+                .collect(Collectors.toList());
+
+        List<LowStockProductResponse> low = lowStock(lowStockThreshold);
+        BigDecimal net = salesBlock.getTotalAmount().subtract(totalExpenses);
+
+        return FinancialReportResponse.builder()
+                .pharmacy(header)
+                .periodFrom(from)
+                .periodTo(to)
+                .totalSales(salesBlock.getTotalAmount())
+                .saleCount(salesBlock.getSaleCount())
+                .totalExpenses(totalExpenses)
+                .netAmount(net)
+                .inventoryUnitsAdded(invUnits)
+                .medicinesSold(medicines)
+                .expenses(expenseEntities.stream().map(this::toExpenseResponse).collect(Collectors.toList()))
+                .inventoryAdded(invRows)
+                .lowStock(low)
+                .sales(salesBlock.getSales())
+                .build();
+    }
+
+    private MedicineSoldRowResponse mapMedicineRow(Object[] row) {
+        return MedicineSoldRowResponse.builder()
+                .productId(((Number) row[0]).longValue())
+                .productName((String) row[1])
+                .quantitySold(((Number) row[2]).longValue())
+                .lineTotal(toBigDecimal(row[3]))
+                .build();
+    }
+
+    private InventoryAddedRowResponse mapInventoryRow(Object[] row) {
+        return InventoryAddedRowResponse.builder()
+                .productId(((Number) row[0]).longValue())
+                .productName((String) row[1])
+                .quantityAdded(((Number) row[2]).longValue())
+                .build();
+    }
+
+    private ExpenseResponse toExpenseResponse(Expense e) {
+        return ExpenseResponse.builder()
+                .id(e.getId())
+                .title(e.getTitle())
+                .description(e.getDescription())
+                .amount(e.getAmount())
+                .incurredAt(e.getIncurredAt())
+                .recordedByUsername(e.getUser() != null ? e.getUser().getUsername() : null)
+                .build();
+    }
+
+    private static BigDecimal toBigDecimal(Object o) {
+        if (o == null) {
+            return BigDecimal.ZERO;
+        }
+        if (o instanceof BigDecimal b) {
+            return b;
+        }
+        if (o instanceof Number n) {
+            return BigDecimal.valueOf(n.doubleValue());
+        }
+        return new BigDecimal(o.toString());
     }
 
     private SaleResponse toSaleResponse(com.pharmacy.entity.Sale s) {

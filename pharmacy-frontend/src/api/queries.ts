@@ -20,6 +20,9 @@ import type {
   SaleResponse,
   PosDraftCartResponse,
   SalesSummaryResponse,
+  FinancialReportResponse,
+  ExpenseRecord,
+  ExpenseRequest,
   StockMovementResponse,
   SupplierRequest,
   SupplierResponse,
@@ -158,6 +161,37 @@ export const reportsApi = {
     api
       .get<ExpiringBatchResponse[]>("/reports/inventory/expiring-soon")
       .then((r) => r.data),
+  financial: (from: string, to: string, lowStockThreshold = 10, zone?: string) =>
+    api
+      .get<FinancialReportResponse>("/reports/financial", {
+        params: {
+          from,
+          to,
+          lowStockThreshold,
+          ...(zone ? { zone } : {}),
+        },
+      })
+      .then((r) => r.data),
+};
+
+export const expensesApi = {
+  list: (from?: string, to?: string, zone?: string) =>
+    api
+      .get<ExpenseRecord[]>("/expenses", {
+        params: {
+          ...(from ? { from } : {}),
+          ...(to ? { to } : {}),
+          ...(zone ? { zone } : {}),
+        },
+      })
+      .then((r) => r.data),
+  create: (body: ExpenseRequest, zone?: string) =>
+    api
+      .post<ExpenseRecord>("/expenses", body, {
+        params: zone ? { zone } : {},
+      })
+      .then((r) => r.data),
+  remove: (id: number) => api.delete(`/expenses/${id}`),
 };
 
 export const suppliersApi = {

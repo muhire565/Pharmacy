@@ -71,23 +71,46 @@ export function MfaSettingsCard() {
               <p className="mt-1 break-all font-mono text-sm text-ink">{secret}</p>
             </div>
             {otpUri ? (
-              <p className="text-xs text-ink-muted">{t("settings.otpUriHint")}</p>
+              <p className="text-xs leading-relaxed text-ink-muted">{t("settings.otpUriHint")}</p>
             ) : null}
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
-              <Input
-                label={t("auth.mfaCode")}
-                value={enableCode}
-                onChange={(e) => setEnableCode(e.target.value)}
-                className="font-mono"
-                autoComplete="one-time-code"
-              />
-              <Button
-                type="button"
-                onClick={() => enableMut.mutate(enableCode)}
-                loading={enableMut.isPending}
+            <div className="border-t border-ink/10 pt-3">
+              <p
+                id="mfa-totp-step-title"
+                className="text-xs font-semibold uppercase tracking-wide text-primary"
               >
-                {t("settings.enableMfa")}
-              </Button>
+                {t("auth.mfaCode")}
+              </p>
+              <p className="mt-1 text-xs leading-relaxed text-ink-muted">{t("settings.mfaCodeHelp")}</p>
+              <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-end">
+                <Input
+                  id="mfa-totp-code"
+                  name="mfa-totp-code"
+                  aria-labelledby="mfa-totp-step-title"
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  placeholder="123456"
+                  maxLength={6}
+                  value={enableCode}
+                  onChange={(e) => {
+                    const d = e.target.value.replace(/\D/g, "").slice(0, 6);
+                    setEnableCode(d);
+                  }}
+                  className="max-w-[11rem] font-mono text-lg tracking-[0.2em]"
+                />
+                <Button
+                  type="button"
+                  onClick={() => {
+                    if (enableCode.length !== 6) {
+                      toast.error(t("settings.mfaNeedSixDigits"));
+                      return;
+                    }
+                    enableMut.mutate(enableCode);
+                  }}
+                  loading={enableMut.isPending}
+                >
+                  {t("settings.enableMfa")}
+                </Button>
+              </div>
             </div>
           </div>
         ) : null}

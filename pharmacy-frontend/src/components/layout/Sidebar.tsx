@@ -7,6 +7,7 @@ import {
   Package,
   Boxes,
   LineChart,
+  Wallet,
   Settings,
   ChevronRight,
   ChevronLeft,
@@ -180,6 +181,7 @@ export function Sidebar({ mobileExpanded, setMobileExpanded, isDesktop }: Sideba
           <Item to="/app/products" icon={Package} label={t("nav.products")} />
           <Item to="/app/inventory" icon={Boxes} label={t("nav.inventory")} />
           {admin ? <Item to="/app/reports" icon={LineChart} label={t("nav.reports")} /> : null}
+          {admin ? <Item to="/app/expenses" icon={Wallet} label={t("nav.expenses")} /> : null}
           {admin ? <Item to="/app/settings" icon={Settings} label={t("nav.settings")} /> : null}
         </nav>
 

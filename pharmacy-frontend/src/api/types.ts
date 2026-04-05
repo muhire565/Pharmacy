@@ -187,6 +187,59 @@ export interface SalesSummaryResponse {
   sales: SaleResponse[];
 }
 
+export interface ReportPharmacyHeader {
+  name: string;
+  address: string;
+  phoneE164: string;
+  email: string;
+  currencyCode: string;
+}
+
+export interface MedicineSoldRow {
+  productId: number;
+  productName: string;
+  quantitySold: number;
+  lineTotal: number;
+}
+
+export interface InventoryAddedRow {
+  productId: number;
+  productName: string;
+  quantityAdded: number;
+}
+
+export interface ExpenseRecord {
+  id: number;
+  title: string;
+  description?: string | null;
+  amount: number;
+  incurredAt: string;
+  recordedByUsername?: string | null;
+}
+
+export interface ExpenseRequest {
+  title: string;
+  description?: string;
+  amount: number;
+  incurredDate: string;
+}
+
+export interface FinancialReportResponse {
+  pharmacy: ReportPharmacyHeader;
+  periodFrom: string;
+  periodTo: string;
+  totalSales: number;
+  saleCount: number;
+  totalExpenses: number;
+  netAmount: number;
+  inventoryUnitsAdded: number;
+  medicinesSold: MedicineSoldRow[];
+  expenses: ExpenseRecord[];
+  inventoryAdded: InventoryAddedRow[];
+  lowStock: LowStockProductResponse[];
+  sales: SaleResponse[];
+}
+
 export interface LowStockProductResponse {
   productId: number;
   name: string;

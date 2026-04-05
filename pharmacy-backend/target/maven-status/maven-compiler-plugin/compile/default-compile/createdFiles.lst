@@ -1,12 +1,14 @@
 com\pharmacy\entity\SaleItem$SaleItemBuilder.class
 com\pharmacy\dto\StockMovementResponse$StockMovementResponseBuilder.class
 com\pharmacy\dto\AuditLogResponse.class
+com\pharmacy\dto\FinancialReportResponse.class
 com\pharmacy\dto\BarcodeLookupResponse$BarcodeLookupResponseBuilder.class
 com\pharmacy\controller\SaleController.class
 com\pharmacy\PharmacyApplication.class
 com\pharmacy\repository\PosDraftCartRepository.class
 com\pharmacy\repository\ProductRepository.class
 com\pharmacy\entity\StockMovement.class
+com\pharmacy\service\ExpenseService.class
 com\pharmacy\dto\BatchRequest.class
 com\pharmacy\controller\AuthController.class
 com\pharmacy\dto\SaleResponse$SaleResponseBuilder.class
@@ -38,6 +40,9 @@ com\pharmacy\dto\MfaVerifyRequest.class
 com\pharmacy\dto\SaleResponse.class
 com\pharmacy\dto\SupplierResponse$SupplierResponseBuilder.class
 com\pharmacy\config\JwtProperties.class
+com\pharmacy\dto\MedicineSoldRowResponse.class
+com\pharmacy\entity\Expense$ExpenseBuilder.class
+com\pharmacy\controller\ExpenseController.class
 com\pharmacy\service\EmailDispatchService.class
 com\pharmacy\service\TotpService.class
 com\pharmacy\dto\OwnerPharmacyResponse$OwnerPharmacyResponseBuilder.class
@@ -47,6 +52,7 @@ com\pharmacy\config\AppMailProperties.class
 com\pharmacy\exception\BusinessRuleException.class
 com\pharmacy\security\JwtAuthenticationEntryPoint.class
 com\pharmacy\config\WebSocketConfig.class
+com\pharmacy\dto\ExpenseRequest.class
 com\pharmacy\service\CountriesService.class
 com\pharmacy\websocket\LiveUpdatesWebSocketHandler.class
 com\pharmacy\dto\ProductResponse$ProductResponseBuilder.class
@@ -59,6 +65,7 @@ com\pharmacy\dto\MfaDisableRequest.class
 com\pharmacy\dto\SaleItemResponse$SaleItemResponseBuilder.class
 com\pharmacy\entity\Product$ProductBuilder.class
 com\pharmacy\security\DatabaseUserDetailsService.class
+com\pharmacy\repository\ExpenseRepository.class
 com\pharmacy\entity\StockReference.class
 com\pharmacy\service\CurrentUserService.class
 com\pharmacy\dto\OwnerLockRequest.class
@@ -78,6 +85,7 @@ com\pharmacy\entity\Sale$SaleBuilder.class
 com\pharmacy\entity\Supplier.class
 com\pharmacy\service\ProductService.class
 com\pharmacy\config\InventoryProperties.class
+com\pharmacy\dto\InventoryAddedRowResponse$InventoryAddedRowResponseBuilder.class
 com\pharmacy\entity\Pharmacy$PharmacyBuilder.class
 com\pharmacy\service\InventoryService.class
 com\pharmacy\security\JwtAuthenticationFilter.class
@@ -88,6 +96,7 @@ com\pharmacy\util\SecureTokens.class
 com\pharmacy\dto\SaleRequest.class
 com\pharmacy\config\ApiProperties.class
 com\pharmacy\controller\PharmacyRegistrationController.class
+com\pharmacy\dto\ReportPharmacyHeaderResponse$ReportPharmacyHeaderResponseBuilder.class
 com\pharmacy\dto\ResendVerificationRequest.class
 com\pharmacy\dto\VerifyEmailRequest.class
 com\pharmacy\service\PharmacyProfileService.class
@@ -95,6 +104,8 @@ com\pharmacy\dto\LoginResponse.class
 com\pharmacy\config\FileStorageProperties.class
 com\pharmacy\service\BarcodeService.class
 com\pharmacy\entity\User$UserBuilder.class
+com\pharmacy\entity\Expense.class
+com\pharmacy\dto\ExpenseResponse.class
 com\pharmacy\dto\SalesSummaryResponse.class
 com\pharmacy\service\SupplierService.class
 com\pharmacy\entity\AuditLog$AuditLogBuilder.class
@@ -102,18 +113,22 @@ com\pharmacy\dto\SaleItemResponse.class
 com\pharmacy\controller\ProductController.class
 com\pharmacy\repository\SaleRepository.class
 com\pharmacy\service\PosDraftService$1.class
+com\pharmacy\dto\ReportPharmacyHeaderResponse.class
 com\pharmacy\service\LiveUpdatesService.class
 com\pharmacy\service\PharmacyRegistrationService.class
 com\pharmacy\security\MfaChallenge.class
 com\pharmacy\repository\AuditLogRepository.class
 com\pharmacy\service\AuditQueryService.class
 com\pharmacy\entity\SaleItem.class
+com\pharmacy\dto\InventoryAddedRowResponse.class
 com\pharmacy\controller\ProductController$SuggestBarcodeResponse.class
 com\pharmacy\controller\ReportController.class
 com\pharmacy\entity\Sale.class
 com\pharmacy\security\JwtTokenProvider.class
 com\pharmacy\dto\MfaEnableRequest.class
 com\pharmacy\security\SecurityUtils.class
+com\pharmacy\dto\FinancialReportResponse$FinancialReportResponseBuilder.class
+com\pharmacy\dto\MedicineSoldRowResponse$MedicineSoldRowResponseBuilder.class
 com\pharmacy\mapper\BatchMapper.class
 com\pharmacy\dto\BarcodeLookupResponse.class
 com\pharmacy\entity\Product.class
@@ -135,6 +150,7 @@ com\pharmacy\entity\StockMovement$StockMovementBuilder.class
 com\pharmacy\dto\ErrorResponse.class
 com\pharmacy\dto\PosDraftCartResponse.class
 com\pharmacy\controller\InventoryController.class
+com\pharmacy\dto\ExpenseResponse$ExpenseResponseBuilder.class
 com\pharmacy\dto\MfaSetupResponse.class
 com\pharmacy\websocket\LiveUpdatesWebSocketHandler$ConnectionParams.class
 com\pharmacy\dto\SalesSummaryResponse$SalesSummaryResponseBuilder.class
@@ -149,6 +165,7 @@ com\pharmacy\dto\ProductInventorySummaryResponse.class
 com\pharmacy\dto\PosDraftLineRequest.class
 com\pharmacy\dto\BatchResponse.class
 com\pharmacy\entity\Batch$BatchBuilder.class
+com\pharmacy\repository\SaleItemRepository.class
 com\pharmacy\service\AuditService.class
 com\pharmacy\dto\LowStockProductResponse.class
 com\pharmacy\dto\SaleLineRequest.class

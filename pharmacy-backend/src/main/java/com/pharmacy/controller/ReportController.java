@@ -1,6 +1,7 @@
 package com.pharmacy.controller;
 
 import com.pharmacy.dto.ExpiringBatchResponse;
+import com.pharmacy.dto.FinancialReportResponse;
 import com.pharmacy.dto.LowStockProductResponse;
 import com.pharmacy.dto.SalesSummaryResponse;
 import com.pharmacy.service.ReportService;
@@ -38,6 +39,16 @@ public class ReportController {
             @RequestParam int month,
             @RequestParam(required = false) ZoneId zone) {
         return reportService.monthlySales(year, month, zone);
+    }
+
+    @GetMapping("/financial")
+    @PreAuthorize("hasRole('PHARMACY_ADMIN')")
+    public FinancialReportResponse financial(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
+            @RequestParam(required = false) ZoneId zone,
+            @RequestParam(defaultValue = "10") int lowStockThreshold) {
+        return reportService.financialReport(from, to, zone, lowStockThreshold);
     }
 
     @GetMapping("/inventory/low-stock")

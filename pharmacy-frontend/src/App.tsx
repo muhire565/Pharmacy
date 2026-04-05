@@ -29,6 +29,9 @@ const InventoryPage = lazy(() =>
 const ReportsPage = lazy(() =>
   import("@/pages/ReportsPage").then((m) => ({ default: m.ReportsPage }))
 );
+const ExpensesPage = lazy(() =>
+  import("@/pages/ExpensesPage").then((m) => ({ default: m.ExpensesPage }))
+);
 const SettingsPage = lazy(() =>
   import("@/pages/SettingsPage").then((m) => ({ default: m.SettingsPage }))
 );
@@ -80,6 +83,14 @@ export default function App() {
               element={
                 <AdminRoute>
                   <ReportsPage />
+                </AdminRoute>
+              }
+            />
+            <Route
+              path="expenses"
+              element={
+                <AdminRoute>
+                  <ExpensesPage />
                 </AdminRoute>
               }
             />
