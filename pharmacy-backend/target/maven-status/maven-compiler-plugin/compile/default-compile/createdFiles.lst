@@ -90,10 +90,13 @@ com\pharmacy\dto\ErrorResponse.class
 com\pharmacy\controller\BarcodeController.class
 com\pharmacy\mapper\SupplierMapper.class
 com\pharmacy\config\CorsAppProperties.class
+com\pharmacy\dto\CashierCreateRequest.class
 com\pharmacy\dto\TreasuryMovementResponse$TreasuryMovementResponseBuilder.class
+com\pharmacy\service\PharmacyCashierService.class
 com\pharmacy\dto\ProductInventorySummaryResponse.class
 com\pharmacy\dto\PosDraftLineRequest.class
 com\pharmacy\entity\Batch$BatchBuilder.class
+com\pharmacy\controller\PharmacyCashierController.class
 com\pharmacy\repository\SaleItemRepository.class
 com\pharmacy\dto\TreasurySummaryResponse$TreasurySummaryResponseBuilder.class
 com\pharmacy\dto\ErrorResponse$ErrorResponseBuilder.class
@@ -133,6 +136,7 @@ com\pharmacy\dto\OwnerPharmacyUpdateRequest.class
 com\pharmacy\repository\ExpenseRepository.class
 com\pharmacy\service\CurrentUserService.class
 com\pharmacy\dto\OwnerLockRequest.class
+com\pharmacy\dto\CashierResponse.class
 com\pharmacy\service\MfaService.class
 com\pharmacy\repository\SupplierRepository.class
 com\pharmacy\config\RenderDataSourceEnvironmentPostProcessor$Parsed.class
@@ -149,6 +153,7 @@ com\pharmacy\config\FileStorageProperties.class
 com\pharmacy\service\BarcodeService.class
 com\pharmacy\entity\User$UserBuilder.class
 com\pharmacy\entity\Expense.class
+com\pharmacy\dto\CashierResponse$CashierResponseBuilder.class
 com\pharmacy\service\SupplierService.class
 com\pharmacy\entity\AuditLog$AuditLogBuilder.class
 com\pharmacy\controller\ProductController.class

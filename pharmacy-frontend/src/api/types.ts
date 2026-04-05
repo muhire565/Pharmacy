@@ -59,6 +59,19 @@ export interface CountryOption {
   dialCode: string;
 }
 
+export interface CashierCreateRequest {
+  email: string;
+  username: string;
+  password: string;
+}
+
+export interface CashierResponse {
+  id: number;
+  email: string;
+  username: string;
+  createdAt: string;
+}
+
 export interface PharmacyResponse {
   id: number;
   name: string;

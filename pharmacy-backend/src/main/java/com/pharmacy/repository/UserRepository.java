@@ -1,9 +1,11 @@
 package com.pharmacy.repository;
 
+import com.pharmacy.entity.Role;
 import com.pharmacy.entity.User;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -20,4 +22,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmailVerificationTokenHash(String tokenHash);
 
     Optional<User> findByPasswordResetTokenHash(String tokenHash);
+
+    List<User> findByPharmacyIdAndRoleOrderByUsernameAsc(Long pharmacyId, Role role);
+
+    Optional<User> findByIdAndPharmacyId(Long id, Long pharmacyId);
 }

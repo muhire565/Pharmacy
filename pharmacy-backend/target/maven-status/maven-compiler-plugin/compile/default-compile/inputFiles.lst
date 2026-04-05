@@ -49,6 +49,7 @@ C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\repository\UserRepository.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\config\ApiProperties.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\service\InventoryService.java
+C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\dto\CashierCreateRequest.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\dto\MedicineSoldRowResponse.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\config\AppMailProperties.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\controller\ReportController.java
@@ -84,8 +85,10 @@ C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\service\EmailDispatchService.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\config\JwtProperties.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\security\PharmacyUserDetails.java
+C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\dto\CashierResponse.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\dto\TreasurySummaryResponse.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\repository\SupplierRepository.java
+C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\service\PharmacyCashierService.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\dto\ProductInventorySummaryResponse.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\PharmacyApplication.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\controller\ExpenseController.java
@@ -136,6 +139,7 @@ C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\util\BarcodeImageUtil.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\service\FileStorageService.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\service\CountriesService.java
+C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\controller\PharmacyCashierController.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\dto\VerifyEmailRequest.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\config\WebSocketConfig.java
 C:\Users\dev Hillary\Music\Phamarcy\pharmacy-backend\src\main\java\com\pharmacy\dto\SupplierRequest.java

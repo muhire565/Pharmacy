@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/Input";
 import { Modal } from "@/components/ui/Modal";
 import { Table, Th, Td } from "@/components/ui/Table";
 import { MfaSettingsCard } from "@/features/settings/MfaSettingsCard";
+import { CashiersSettingsCard } from "@/features/settings/CashiersSettingsCard";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
 const supSchema = z.object({
@@ -92,6 +93,7 @@ export function SettingsPage() {
         <>
           <MfaSettingsCard />
           <PharmacyProfileSettings />
+          <CashiersSettingsCard />
         </>
       ) : null}
 

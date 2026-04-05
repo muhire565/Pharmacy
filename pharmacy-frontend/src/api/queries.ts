@@ -3,6 +3,8 @@ import type {
   BarcodeLookupResponse,
   BatchRequest,
   BatchResponse,
+  CashierCreateRequest,
+  CashierResponse,
   CountryOption,
   ExpiringBatchResponse,
   LoginRequest,
@@ -62,6 +64,13 @@ export const pharmacyApi = {
   me: () => api.get<PharmacyResponse>("/pharmacies/me").then((r) => r.data),
   updateMe: (fd: FormData) =>
     api.put<PharmacyResponse>("/pharmacies/me", fd).then((r) => r.data),
+};
+
+export const cashiersApi = {
+  list: () => api.get<CashierResponse[]>("/pharmacy/cashiers").then((r) => r.data),
+  create: (body: CashierCreateRequest) =>
+    api.post<CashierResponse>("/pharmacy/cashiers", body).then((r) => r.data),
+  remove: (id: number) => api.delete(`/pharmacy/cashiers/${id}`),
 };
 
 export const ownerApi = {
